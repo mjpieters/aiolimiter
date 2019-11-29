@@ -1,0 +1,69 @@
+# aiolimiter
+
+[![Latest PyPI package version](https://badge.fury.io/py/aiolimiter.svg)][pypi]
+
+## Introduction
+
+An efficient implementation of a rate limiter for asyncio.
+
+This project implements the _[Leaky bucket algorithm][], giving you precise control over the rate a code section can be entered:
+
+```python
+from aiolimiter import AsyncLimiter
+
+# allow for 100 concurrent entries within a 30 second window
+rate_limit = AsyncLimiter(100, 30)
+
+
+async def some_coroutine():
+    async with rate_limit:
+        # this section is *at most* going to entered 100 times
+        # in a 30 second period.
+        await do_something()
+```
+
+It was first developed [as an answer on Stack Overflow][so45502319].
+
+## Installation
+
+```sh
+$ pip install aiolimiter
+```
+
+The library requires Python 3.6 or newer.
+
+## Requirements
+
+- Python >= 3.6
+
+## License
+
+`aiolimiter` is offered under the [MIT license](./LICENSE.txt).
+
+## Source code
+
+The project is hosted on [GitHub][].
+
+Please file an issue in the [bug tracker][] if you have found a bug
+or have some suggestions to improve the library.
+
+## Developer setup
+
+This project uses [poetry][] to manage dependencies, testing and releases. Make sure you have installed that tool, then run the following command to get set up:
+
+```sh
+poetry install -E docs && poetry run doit devsetup
+```
+
+Apart from using `poetry run doit devsetup`, you can either use `poetry shell` to enter a shell environment with a virtualenv set up for you, or use `poetry run ...` to run commands within the virtualenv.
+
+Tests are run with `pytest` and `tox`. Releases are made with `poetry build` and `poetry publish`. Code quality is maintained with `flake8`, `black` and `mypy`, and `pre-commit` runs quick checks to maintain the standards set.
+
+A series of `doit` tasks are defined; run `poetry run doit list` (or `doit list` with `poetry shell` activated) to list them. The default action is to run a full linting, testing and building run. It is recommended you run this before creating a pull request.
+
+[pypi]: https://pypi.org/project/aiolimiter
+[leaky bucket algorithm]: https://en.wikipedia.org/wiki/Leaky_bucket
+[so]: https://stackoverflow.com/a/45502319/100297
+[github]: https://github.com/mjpieters/aiolimiter
+[bug tracker]: https://github.com/mjpieters/aiolimiter/issues
+[poetry]: https://poetry.eustace.io/
