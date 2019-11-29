@@ -194,7 +194,7 @@ def task_build():
     }
     yield {
         "name": "check",
-        "setup": ["devsetup"],
+        "setup": ["devsetup", "build:poetry"],
         "actions": ["twine check dist/*"],
         "file_dep": [*DIST_FILES],
     }
