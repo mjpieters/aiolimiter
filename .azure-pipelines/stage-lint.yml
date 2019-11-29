@@ -16,7 +16,7 @@ stages:
               versionSpec: "3.7"
               architecture: "x64"
 
-          - script: |
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
@@ -40,7 +40,7 @@ stages:
               versionSpec: "3.7"
               architecture: "x64"
 
-          - script: |
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
@@ -64,7 +64,7 @@ stages:
               versionSpec: "3.7"
               architecture: "x64"
 
-          - script: |
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
@@ -88,7 +88,7 @@ stages:
               versionSpec: "3.7"
               architecture: "x64"
 
-          - script: |
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
@@ -112,7 +112,7 @@ stages:
               versionSpec: "3.7"
               architecture: "x64"
 
-          - script: |
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry

@@ -39,7 +39,7 @@ stages:
               versionSpec: "$(python.version)"
               architecture: "x64"
 
-          - script: |
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
