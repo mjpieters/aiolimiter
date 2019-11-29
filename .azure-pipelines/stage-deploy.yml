@@ -1,0 +1,43 @@
+parameters:
+  pythonVersions: []
+  operatingSystems:
+    - "Linux"
+    - "Windows"
+    - "Mac"
+
+stages:
+  - stage: build
+    displayName: "Build"
+
+    jobs:
+      - job: distributions
+        displayName: "Create distributions"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+            displayName: Install Poetry
+
+          - script: poetry install
+            displayName: Install dependencies
+
+          - task: CopyFiles@2
+            displayName: "Copy distribution"
+            inputs:
+              sourceFolder: $(Build.SourcesDirectory)/dist
+              targetFolder: $(Build.ArtifactStagingDirectory)
+
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish distribution"
+            inputs:
+              pathtoPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: dist

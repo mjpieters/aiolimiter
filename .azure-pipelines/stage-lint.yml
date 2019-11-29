@@ -1,0 +1,117 @@
+stages:
+  - stage: lint
+    displayName: "Lint"
+
+    jobs:
+      - job: "flake8"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+            displayName: Install Poetry
+
+          - script: poetry install
+            displayName: Install dependencies
+
+          - script: poetry run doit lint:flake8
+            displayName: "Run flake8"
+
+      - job: "isort"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+            displayName: Install Poetry
+
+          - script: poetry install
+            displayName: Install dependencies
+
+          - script: poetry run doit lint:isort_check
+            displayName: "Run isort checker"
+
+      - job: "mypy"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+            displayName: Install Poetry
+
+          - script: poetry install
+            displayName: Install dependencies
+
+          - script: poetry run doit lint:mypy
+            displayName: "Run isort checker"
+
+      - job: "docs"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+            displayName: Install Poetry
+
+          - script: poetry install
+            displayName: Install dependencies
+
+          - script: poetry run doit docs
+            displayName: "Run docs checker"
+
+      - job: "twine"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+            displayName: Install Poetry
+
+          - script: poetry install
+            displayName: Install dependencies
+
+          - script: poetry run doit docs
+            displayName: "Run docs checker"
+
+          - script: poetry run doit build
+            displayName: "Run twine checker"

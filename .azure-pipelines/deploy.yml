@@ -1,0 +1,28 @@
+trigger:
+  tags:
+    include:
+      - v?.*
+pr: none
+
+variables:
+  - group: codecov
+  - group: twine
+
+stages:
+  - template: stage-lint.yml
+
+  - template: stage-test.yml
+    parameters:
+      pythonVersions:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+
+  - template: stage-deploy.yml
+    parameters:
+      pythonVersions:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+
+  - template: stage-publish.yml
