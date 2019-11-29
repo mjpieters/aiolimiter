@@ -41,7 +41,7 @@ stages:
 
           - script: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-              ##vso[task.prependpath]$HOME/.poetry/bin/
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
           - script: |
