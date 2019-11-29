@@ -24,7 +24,7 @@ stages:
           - script: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit lint:flake8
+          - script: poetry run doit -v2 lint:flake8
             displayName: "Run flake8 checker"
 
       - job: "isort"
@@ -48,7 +48,7 @@ stages:
           - script: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit lint:isort_check
+          - script: poetry run doit -v2 lint:isort_check
             displayName: "Run isort checker"
 
       - job: "mypy"
@@ -72,7 +72,7 @@ stages:
           - script: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit lint:mypy
+          - script: poetry run doit -v2 lint:mypy
             displayName: "Run mypy checker"
 
       - job: "docs"
@@ -96,7 +96,7 @@ stages:
           - script: poetry install -E docs
             displayName: Install dependencies
 
-          - script: poetry run doit docs
+          - script: poetry run doit -v2 docs
             displayName: "Run docs checker"
 
       - job: "twine"
