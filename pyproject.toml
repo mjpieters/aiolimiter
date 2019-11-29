@@ -36,6 +36,7 @@ mypy = "^0.740"
 doit = "^0.31.1"
 isort = {extras = ["pyproject"], version = "^4.3.21"}
 toml = "^0.10.0"
+twine = "^3.1.1"
 
 [tool.poetry.extras]
 docs = ["sphinx", "aiohttp-theme", "sphinx-autodoc-typehints", "sphinx-spelling", "toml"]

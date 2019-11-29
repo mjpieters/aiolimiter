@@ -183,13 +183,20 @@ def task_docs():
 
 def task_build():
     """Bulid the distribution packages"""
-    return {
+    yield {
+        "name": "poetry",
         "setup": ["devsetup"],
         "actions": ["poetry build"],
         "task_dep": ["test", "docs"],
         "file_dep": [HERE / "pyproject.toml", *ALL_PY_FILES],
         "targets": [DIST_PATH, *DIST_FILES],
         "clean": True,
+    }
+    yield {
+        "name": "check",
+        "setup": ["devsetup"],
+        "actions": ["twine check dist/*"],
+        "file_dep": [*DIST_FILES],
     }
 
 
