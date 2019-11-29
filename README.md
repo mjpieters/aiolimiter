@@ -1,12 +1,18 @@
 # aiolimiter
 
-[![Latest PyPI package version](https://badge.fury.io/py/aiolimiter.svg)][pypi]
+[![Latest PyPI package version][pypi_badge]][pypi_link]
+[![Documentation Status][rtd_badge]][rtd_link]
+
+[pypi_badge]: https://badge.fury.io/py/aiolimiter.svg
+[pypi_link]: https://pypi.org/project/aiolimiter
+[rtd_badge]: https://readthedocs.org/projects/aiolimiter/badge/?version=latest
+[rtd_link]: https://aiolimiter.readthedocs.io/en/latest/?badge=latest
 
 ## Introduction
 
 An efficient implementation of a rate limiter for asyncio.
 
-This project implements the _[Leaky bucket algorithm][], giving you precise control over the rate a code section can be entered:
+This project implements the [Leaky bucket algorithm][], giving you precise control over the rate a code section can be entered:
 
 ```python
 from aiolimiter import AsyncLimiter
@@ -23,6 +29,10 @@ async def some_coroutine():
 ```
 
 It was first developed [as an answer on Stack Overflow][so45502319].
+
+## Documentation
+
+https://aiolimiter.readthedocs.io
 
 ## Installation
 
@@ -61,9 +71,8 @@ Tests are run with `pytest` and `tox`. Releases are made with `poetry build` and
 
 A series of `doit` tasks are defined; run `poetry run doit list` (or `doit list` with `poetry shell` activated) to list them. The default action is to run a full linting, testing and building run. It is recommended you run this before creating a pull request.
 
-[pypi]: https://pypi.org/project/aiolimiter
 [leaky bucket algorithm]: https://en.wikipedia.org/wiki/Leaky_bucket
-[so]: https://stackoverflow.com/a/45502319/100297
+[so45502319]: https://stackoverflow.com/a/45502319/100297
 [github]: https://github.com/mjpieters/aiolimiter
 [bug tracker]: https://github.com/mjpieters/aiolimiter/issues
 [poetry]: https://poetry.eustace.io/
