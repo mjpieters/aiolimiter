@@ -42,26 +42,27 @@ stages:
           - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               env
-              echo "##vso[section]HOME=$HOME"
-              echo "##vso[section]Agent.HomeDirectory=$(Agent.HomeDirectory)"
-              echo "##vso[section]Build.SourcesDirectory=$(Build.SourcesDirectory)"
+              echo "##[section]HOME=$HOME"
+              echo "##[section]Agent.HomeDirectory=$(Agent.HomeDirectory)"
+              echo "##[section]Build.SourcesDirectory=$(Build.SourcesDirectory)"
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: |
+          - bash: |
+              echo "##[section]PATH=$PATH"
               poetry install
               poetry run pip install pytest-azurepipelines
             displayName: Install dependencies
 
-          - script: |
+          - bash: |
               poetry run pytest tests -vv --no-coverage-upload
             displayName: "pytest"
 
-          - script: |
+          - bash: |
               poetry run coverage xml
             displayName: "Prepare coverage"
 
-          - script: |
+          - bash: |
               poetry run pip install codecov
               poetry run codecov -f coverage.xml -X gcov
             env:
