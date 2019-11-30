@@ -40,7 +40,7 @@ stages:
               architecture: "x64"
 
           - bash: |
-              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+              POETRY_PREVIEW=1 curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
