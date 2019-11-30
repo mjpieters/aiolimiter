@@ -46,7 +46,7 @@ stages:
 
           - bash: |
               poetry install
-              poetry run pip install pytest-azurepipelines
+              poetry run pip install 'pytest-azurepipelines>=1.0.0rc1'
             displayName: Install dependencies
 
           - bash: |
