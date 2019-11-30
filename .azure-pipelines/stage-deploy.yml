@@ -24,11 +24,16 @@ stages:
               versionSpec: "3.7"
               architecture: "x64"
 
-          - script: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: poetry install
+          - bash: poetry install
             displayName: Install dependencies
+
+          - bash: poetry build
+            displayName: 'Make tarball and universal wheel'
 
           - task: CopyFiles@2
             displayName: "Copy distribution"
