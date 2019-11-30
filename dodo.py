@@ -12,6 +12,8 @@ from doit.tools import Interactive, run_once
 
 DOIT_CONFIG = {"default_tasks": ["all"], "minversion": "0.31.0"}
 POETRY_ACTIVE = os.environ.get("POETRY_ACTIVE", False)
+# https://github.com/MicrosoftDocs/vsts-docs/issues/4051
+ON_CI = os.environ.get("BUILD_REASON", False) or os.environ.get("CI", False)
 
 # Paths
 
@@ -67,9 +69,10 @@ def with_poetry(*actions):
 def task_poetry_install():
     # in case we have doit installed outside of poetry
     # and there is no lock file, run poetry first.
+    extras = ["--extras", "docs"] if not ON_CI else []
     return {
         "basename": "_install_poetry",
-        "actions": [["poetry", "install", "--extras", "docs"]],
+        "actions": [["poetry", "install", *extras]],
         "targets": ["poetry.lock"],
         "uptodate": [run_once],
     }
