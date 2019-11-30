@@ -1,12 +1,18 @@
 # aiolimiter
 
-[![Latest PyPI package version][pypi_badge]][pypi_link]
-[![Documentation Status][rtd_badge]][rtd_link]
+[![Azure Pipelines status for master branch][azure_badge]][azure_status]
+[![codecov.io status for master branch][codecov_badge]][codecov_status]
+[![Latest PyPI package version][pypi_badge]][aiolimiter_release]
+[![Latest Read The Docs][rtd_badge]][aiolimiter_docs]
 
+[azure_badge]: https://dev.azure.com/mjpieters/aiolimiter/_apis/build/status/CI?branchName=master
+[azure_status]: https://dev.azure.com/mjpieters/aiolimiter/_build/latest?definitionId=4&branchName=master "Azure Pipelines status for master branch"
+[codecov_badge]: https://codecov.io/gh/mjpieters/aiolimiter/branch/master/graph/badge.svg
+[codecov_status]: https://codecov.io/gh/mjpieters/aiolimiter "codecov.io status for master branch"
 [pypi_badge]: https://badge.fury.io/py/aiolimiter.svg
-[pypi_link]: https://pypi.org/project/aiolimiter
+[aiolimiter_release]: https://pypi.org/project/aiolimiter "Latest PyPI package version"
 [rtd_badge]: https://readthedocs.org/projects/aiolimiter/badge/?version=latest
-[rtd_link]: https://aiolimiter.readthedocs.io/en/latest/?badge=latest
+[aiolimiter_docs]: https://aiolimiter.readthedocs.io/en/latest/?badge=latest "Latest Read The Docs"
 
 ## Introduction
 

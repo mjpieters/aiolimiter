@@ -1,0 +1,124 @@
+stages:
+  - stage: lint
+    displayName: "Lint"
+
+    jobs:
+      - job: "flake8"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+            displayName: Install Poetry
+
+          - bash: poetry install
+            displayName: Install dependencies
+
+          - bash: poetry run doit -v2 lint:flake8
+            displayName: "Run flake8 checker"
+
+      - job: "isort"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+            displayName: Install Poetry
+
+          - bash: poetry install
+            displayName: Install dependencies
+
+          - bash: poetry run doit -v2 lint:isort_check
+            displayName: "Run isort checker"
+
+      - job: "mypy"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+            displayName: Install Poetry
+
+          - bash: poetry install
+            displayName: Install dependencies
+
+          - bash: poetry run doit -v2 lint:mypy
+            displayName: "Run mypy checker"
+
+      - job: "docs"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+            displayName: Install Poetry
+
+          - bash: poetry install -E docs
+            displayName: Install dependencies
+
+          - bash: poetry run doit -v2 docs
+            displayName: "Run docs checker"
+
+      - job: "twine"
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.7"
+              architecture: "x64"
+
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+            displayName: Install Poetry
+
+          - bash: poetry install
+            displayName: Install dependencies
+
+          - bash: poetry run doit build
+            displayName: "Run twine checker"

@@ -1,0 +1,66 @@
+parameters:
+  pythonVersions: []
+  operatingSystems:
+    - "Linux"
+    - "Windows"
+    - "Mac"
+
+stages:
+  - stage: test
+    displayName: "Run tests"
+
+    jobs:
+      - job:
+
+        strategy:
+          matrix:
+            ${{ each py in parameters.pythonVersions }}:
+              ${{ each os in parameters.operatingSystems }}:
+                ${{ format('Py{0} {1}', py, os) }}:
+                  python.version: ${{ py }}
+                  ${{ if eq(os, 'Linux') }}:
+                    image: "ubuntu-latest"
+                  ${{ if eq(os, 'Windows') }}:
+                    image: "windows-latest"
+                  ${{ if eq(os, 'Mac') }}:
+                    image: "macos-latest"
+
+        pool:
+          vmImage: "$(image)"
+
+        timeoutInMinutes: 10
+
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(python.version)"
+              architecture: "x64"
+
+          - bash: |
+              curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
+              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+            displayName: Install Poetry
+
+          - bash: |
+              poetry install
+              poetry run pip install 'pytest-azurepipelines>=1.0.0rc1'
+            displayName: Install dependencies
+
+          - bash: |
+              poetry run pytest tests -vv --no-coverage-upload
+            displayName: "pytest"
+
+          - bash: |
+              poetry run coverage xml
+            displayName: "Prepare coverage"
+
+          - bash: |
+              poetry run pip install codecov
+              poetry run codecov -f coverage.xml -X gcov
+            env:
+              CODECOV_TOKEN: $(codecov.token)
+            condition: and(variables['codecov.token'], succeeded())
+            displayName: "Upload coverage reports"
