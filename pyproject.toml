@@ -37,7 +37,7 @@ pytest-asyncio = "^0.10.0"
 pytest-cov = "^2.8.1"
 tox = "^3.14.1"
 pre-commit = "^1.20.0"
-mypy = "^0.740"
+mypy = "^0.750"
 doit = "^0.31.1"
 isort = {extras = ["pyproject"], version = "^4.3.21"}
 toml = "^0.10.0"
