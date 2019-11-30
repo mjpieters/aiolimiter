@@ -21,10 +21,10 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: poetry install
+          - bash: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit -v2 lint:flake8
+          - bash: poetry run doit -v2 lint:flake8
             displayName: "Run flake8 checker"
 
       - job: "isort"
@@ -45,10 +45,10 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: poetry install
+          - bash: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit -v2 lint:isort_check
+          - bash: poetry run doit -v2 lint:isort_check
             displayName: "Run isort checker"
 
       - job: "mypy"
@@ -69,10 +69,10 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: poetry install
+          - bash: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit -v2 lint:mypy
+          - bash: poetry run doit -v2 lint:mypy
             displayName: "Run mypy checker"
 
       - job: "docs"
@@ -93,10 +93,10 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: poetry install -E docs
+          - bash: poetry install -E docs
             displayName: Install dependencies
 
-          - script: poetry run doit -v2 docs
+          - bash: poetry run doit -v2 docs
             displayName: "Run docs checker"
 
       - job: "twine"
@@ -117,8 +117,8 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - script: poetry install
+          - bash: poetry install
             displayName: Install dependencies
 
-          - script: poetry run doit build
+          - bash: poetry run doit build
             displayName: "Run twine checker"

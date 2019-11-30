@@ -41,15 +41,10 @@ stages:
 
           - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-              env
-              echo "##[section]HOME=$HOME"
-              echo "##[section]Agent.HomeDirectory=$(Agent.HomeDirectory)"
-              echo "##[section]Build.SourcesDirectory=$(Build.SourcesDirectory)"
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
           - bash: |
-              echo "##[section]PATH=$PATH"
               poetry install
               poetry run pip install pytest-azurepipelines
             displayName: Install dependencies
