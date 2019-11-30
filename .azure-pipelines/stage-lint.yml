@@ -117,8 +117,8 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - bash: poetry install
+          - bash: poetry install -E docs
             displayName: Install dependencies
 
-          - bash: poetry run doit build
+          - bash: poetry run doit -v2 build
             displayName: "Run twine checker"
