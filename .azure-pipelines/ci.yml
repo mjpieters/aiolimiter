@@ -16,10 +16,10 @@ variables:
   - group: codecov
 
 stages:
-  - template: stage-lint.yml
+  # - template: stage-lint.yml
   - template: stage-test.yml
     parameters:
       pythonVersions:
         - "3.6"
         - "3.7"
-        - "3.8"
+        # - "3.8"

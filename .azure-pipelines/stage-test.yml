@@ -41,6 +41,10 @@ stages:
 
           - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+              env
+              echo "##vso[section]HOME=$HOME"
+              echo "##vso[section]Agent.HomeDirectory=$(Agent.HomeDirectory)"
+              echo "##vso[section]Build.SourcesDirectory=$(Build.SourcesDirectory)"
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
