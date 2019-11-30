@@ -14,6 +14,11 @@ classifiers = [
 	"Intended Audience :: Developers",
 ]
 
+[tool.poetry.urls]
+"CI: Azure Pipelines" = "https://dev.azure.com/mjpieters/aiolimiter/_build"
+"Coverage: codecov" = "https://codecov.io/github/aiolimiter/aiosignal"
+"GitHub: issues" = "https://github.com/mjpieters/aiolimiter/issues"
+
 [tool.poetry.dependencies]
 python = "^3.6"
 sphinx = {version = "^2.2.1", optional = true}

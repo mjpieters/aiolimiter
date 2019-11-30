@@ -139,11 +139,35 @@ html_theme_options = {
     "github_banner": True,
     "badges": [
         {
+            "image": (
+                f"https://dev.azure.com/{_github_parts['user']}/"
+                f"{_github_parts['repo']}/_apis/build/status/CI?branchName=master"
+            ),
+            "target": (
+                f"https://dev.azure.com/{_github_parts['user']}/{_github_parts['repo']}"
+                "/_build/latest?definitionId=4&branchName=master"
+            ),
+            "height": "20",
+            "alt": "Azure Pipelines CI status",
+        },
+        {
+            "image": (
+                f"https://codecov.io/github/{_github_parts['user']}/"
+                f"{_github_parts['repo']}/coverage.svg?branch=master"
+            ),
+            "target": (
+                f"https://codecov.io/github/{_github_parts['user']}/"
+                f"{_github_parts['repo']}"
+            ),
+            "height": "20",
+            "alt": "Code coverage status",
+        },
+        {
             "image": f"https://badge.fury.io/py/{_project_config['name']}.svg",
             "target": f"https://badge.fury.io/py/{_project_config['name']}",
             "height": "20",
             "alt": "Latest PyPI package version",
-        }
+        },
     ],
 }
 
