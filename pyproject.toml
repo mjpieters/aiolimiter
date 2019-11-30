@@ -42,6 +42,7 @@ doit = "^0.31.1"
 isort = {extras = ["pyproject"], version = "^4.3.21"}
 toml = "^0.10.0"
 twine = "^3.1.1"
+towncrier = "^19.2.0"
 
 [tool.poetry.extras]
 docs = ["sphinx", "aiohttp-theme", "sphinx-autodoc-typehints", "sphinxcontrib-spelling", "toml"]
@@ -49,6 +50,17 @@ docs = ["sphinx", "aiohttp-theme", "sphinx-autodoc-typehints", "sphinxcontrib-sp
 [tool.isort]
 line_length = 88
 known_third_party = ["pytest"]
+
+[tool.towncrier]
+directory = "changelog.d/"
+template = "changelog.d/towncrier_template.md"
+filename = "CHANGELOG.md"
+package_dir = "src"
+package = "aiolimiter"
+title_format = "## {name} {version} ({project_date})"
+issue_format = "[#{issue}](https://github.com/mjpieters/aiolimiter/issues/{issue})"
+start_string = "<!-- Towncrier release notes start -->\n"
+underlines = ["", "", ""]
 
 [build-system]
 requires = ["poetry>=0.12"]
