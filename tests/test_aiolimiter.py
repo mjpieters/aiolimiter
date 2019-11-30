@@ -4,13 +4,31 @@
 
 import asyncio
 import time
+from pathlib import Path
 from unittest import mock
 
 import pytest
+import toml
 
 from aiolimiter import AsyncLimiter
 
 WAIT_LIMIT = 2  # seconds before we declare the test failed
+
+
+def test_version():
+    # the version is taken from metadata
+    from aiolimiter import __version__
+
+    assert __version__
+
+    pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+    with pyproject as f:
+        metadata = toml.load(f)["tool"]["poetry"]
+
+    # pyproject bumps to -alpha.0, -beta.1, etc., but releases a0, b1
+    # We don't really need to care about those, just verify that sorta
+    # the right version is used.
+    assert __version__.startswith(metadata["version"].partition("-")[0])
 
 
 async def wait_for_n_done(tasks, n):
