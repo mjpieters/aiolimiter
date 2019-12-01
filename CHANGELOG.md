@@ -14,6 +14,13 @@
 
 <!-- Towncrier release notes start -->
 
+## Aiolimiter 1.0.0b1 (2019-12-01)
+
+### Improved Documentation
+
+- Corrected build process to ensure CHANGELOG.md is updated on release. ([#4](https://github.com/mjpieters/aiolimiter/issues/4))
+
+
 ## Aiolimiter 1.0.0b0 (2019-11-30)
 
 _No significant changes_.
