@@ -25,12 +25,26 @@ stages:
               architecture: "x64"
 
           - bash: |
+              RELEASE_VERSION=`git describe --exact-match $(Build.SourceBranch) | cut -b2-`
+              grep -q "## Aiolimiter $RELEASE_VERSION (.*)$" CHANGELOG.md
+            displayName: Check for release in the changelog
+
+          - bash: |
+              if [[ $(git ls-tree -r --name-only $(Build.SourceBranch) changelog.d/ | sort | tail -n+2) ]]; then
+                exit 1;
+              fi
+            displayName: Verify there are no towncrier fragments
+
+          - bash: |
               curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | POETRY_PREVIEW=1 python
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
           - bash: poetry install
             displayName: Install dependencies
+
+          - bash: if [[ $(ls -A) ]]; then
+            displayName:
 
           - bash: poetry build
             displayName: 'Make tarball and universal wheel'

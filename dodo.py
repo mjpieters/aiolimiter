@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 
 from doit.action import CmdAction
+from doit.exceptions import TaskFailed
 from doit.tools import Interactive, run_once
 
 DOIT_CONFIG = {"default_tasks": ["all"], "minversion": "0.31.0"}
@@ -26,15 +27,29 @@ def _path_sortkey(p):
     return (p.is_dir(), *p.parts)
 
 
+def is_towncrier_fragment(path):
+    parts = path.name.split(".")
+    return (
+        len(parts) > 1
+        and parts[0].isdigit()
+        and parts[0].isascii()
+        and parts[1] in {"feature", "bugfix", "doc", "removal", "misc"}
+    )
+
+
 # source files
 THIS = Path(__file__).resolve()
 HERE = THIS.parent
+PYPROJECT = HERE / "pyproject.toml"
 SRC_PATH = HERE / "src"
 SRC_FILES = sorted(SRC_PATH.rglob("*.py"), key=_path_sortkey)
 TESTS_PATH = HERE / "tests"
 TESTS_FILES = sorted(TESTS_PATH.rglob("*.py"), key=_path_sortkey)
 DOC_PATH = HERE / "docs"
 RST_FILES = sorted(DOC_PATH.rglob("*.rst"), key=_path_sortkey)
+CHANGELOG_PATH = HERE / "changelog.d"
+CHANGELOG_TEMPLATE = CHANGELOG_PATH / "towncrier_template.md"
+CHANGELOG_FRAGMENTS = sorted(filter(is_towncrier_fragment, CHANGELOG_PATH.iterdir()))
 
 ALL_PY_FILES = sorted(
     [THIS, *SRC_FILES, *TESTS_FILES, *DOC_PATH.glob("*.py")], key=_path_sortkey
@@ -50,8 +65,7 @@ DIST_PATH = HERE / "dist"
 DIST_FILES = sorted(
     [*DIST_PATH.glob("*.tar.gz"), *DIST_PATH.glob("*.whl")], key=_path_sortkey
 )
-
-# File lists
+CHANGELOG = HERE / "CHANGELOG.md"
 
 
 def with_poetry(*actions):
@@ -149,10 +163,11 @@ def task_tox():
     }
 
 
-def task_docs_spelling():
-    """Check documentation spelling"""
+def task_docs_checks():
+    """Check documentation spelling and towncrier handling"""
     make_cmd = with_poetry(["make", "spelling"])[0]
-    return {
+    yield {
+        "name": "docs_spelling",
         "setup": ["devsetup"],
         "actions": [CmdAction(make_cmd, cwd=DOC_PATH, shell=False)],
         "file_dep": [
@@ -166,12 +181,34 @@ def task_docs_spelling():
         "clean": True,
     }
 
+    def check_towncrier_fragments(changed):
+        for path in map(Path, changed):
+            if not (is_towncrier_fragment(path) or path == CHANGELOG_TEMPLATE):
+                return TaskFailed(
+                    f"{CHANGELOG_PATH.name}/{path.name} is not a valid towncrier "
+                    f"fragment name."
+                )
+
+    yield {
+        "name": "towncrier_fragments",
+        "actions": [check_towncrier_fragments],
+        "file_dep": sorted(CHANGELOG_PATH.iterdir()),
+    }
+    yield {
+        "name": "towncrier",
+        "task_dep": ["docs_checks:towncrier_fragments"],
+        "setup": ["devsetup"],
+        "actions": with_poetry(["towncrier", "--draft"]),
+        "file_dep": [PYPROJECT, CHANGELOG_TEMPLATE, *CHANGELOG_FRAGMENTS],
+    }
+
 
 def task_docs():
     """Build the documentation"""
     make_cmd = with_poetry(["make", "html"])[0]
     return {
         "setup": ["devsetup"],
+        "task_dep": ["docs_checks"],
         "actions": [CmdAction(make_cmd, cwd=DOC_PATH, shell=False)],
         "file_dep": [
             *SRC_FILES,
@@ -191,7 +228,7 @@ def task_build():
         "setup": ["devsetup"],
         "actions": ["poetry build"],
         "task_dep": ["test", "docs"],
-        "file_dep": [HERE / "pyproject.toml", *ALL_PY_FILES],
+        "file_dep": [PYPROJECT, *ALL_PY_FILES],
         "targets": [DIST_PATH, *DIST_FILES],
         "clean": True,
     }
@@ -205,4 +242,4 @@ def task_build():
 
 def task_all():
     """Run all checks, then build the docs and release"""
-    return {"actions": [], "task_dep": ["tox", "docs_spelling", "docs", "build"]}
+    return {"actions": [], "task_dep": ["tox", "docs", "build"]}

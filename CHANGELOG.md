@@ -6,7 +6,8 @@
     fix problems like typo corrections or such.
     To add a new change log entry, please see
     https://pip.pypa.io/en/latest/development/contributing/#news-entries
-    we named the news folder "changelog.d".
+    we named the news folder "changelog.d", and use Markdown to format
+    entries.
 
     WARNING: Don't drop the next directive!
 -->
