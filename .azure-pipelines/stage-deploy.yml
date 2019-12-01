@@ -45,9 +45,6 @@ stages:
           - bash: poetry install
             displayName: Install dependencies
 
-          - bash: if [[ $(ls -A) ]]; then
-            displayName:
-
           - bash: poetry build
             displayName: 'Make tarball and universal wheel'
 
