@@ -208,6 +208,7 @@ def task_docs():
     make_cmd = with_poetry(["make", "html"])[0]
     return {
         "setup": ["devsetup"],
+        "task_dep": ["docs_checks"],
         "actions": [CmdAction(make_cmd, cwd=DOC_PATH, shell=False)],
         "file_dep": [
             *SRC_FILES,
@@ -241,4 +242,4 @@ def task_build():
 
 def task_all():
     """Run all checks, then build the docs and release"""
-    return {"actions": [], "task_dep": ["tox", "docs_checks", "docs", "build"]}
+    return {"actions": [], "task_dep": ["tox", "docs", "build"]}
