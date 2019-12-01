@@ -30,8 +30,10 @@ stages:
             displayName: Check for release in the changelog
 
           - bash: |
-              if [[ $(git ls-tree -r --name-only $(Build.SourceBranch) changelog.d/ | sort | tail -n+2) ]]; then
-                exit 1;
+              FRAGMENTS=`git ls-tree -r --name-only $(Build.SourceBranch) changelog.d/ | grep -v '^changelog\.d/towncrier_template\.md$'`
+              if [[ -n "$FRAGMENTS" ]]; then
+                echo "##vso[task.logissue]Found unprocessed Towncrier fragments: $FRAGMENTS"
+                exit 1
               fi
             displayName: Verify there are no towncrier fragments
 
