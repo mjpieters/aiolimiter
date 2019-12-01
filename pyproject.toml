@@ -13,6 +13,7 @@ classifiers = [
 	"Framework :: AsyncIO",
 	"Intended Audience :: Developers",
 ]
+include = ["CHANGELOG.md"]
 
 [tool.poetry.urls]
 "CI: Azure Pipelines" = "https://dev.azure.com/mjpieters/aiolimiter/_build"

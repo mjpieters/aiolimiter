@@ -12,3 +12,7 @@
 -->
 
 <!-- Towncrier release notes start -->
+
+## Aiolimiter 1.0.0b0 (2019-11-30)
+
+_No significant changes_.
