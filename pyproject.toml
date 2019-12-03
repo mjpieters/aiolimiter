@@ -25,7 +25,7 @@ python = "^3.6"
 # until tox updates their importlib_metadata pin to allow for 1.0.0,
 # use a range that includes 1.0.0 but allows the older version.
 # After that upgrade to ^1.0.0.
-importlib_metadata = { version = ">=0.23,<1.1.0", python = "< 3.8" }
+importlib_metadata = { version = ">=0.23,<1.2.0", python = "< 3.8" }
 sphinx = {version = "^2.2.1", optional = true}
 aiohttp-theme = {version = "^0.1.6", optional = true}
 sphinx-autodoc-typehints = {version = "^1.10.3", optional = true}
