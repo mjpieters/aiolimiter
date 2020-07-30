@@ -31,7 +31,7 @@ toml = {version = "^0.10.0", optional = true}
 
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.3"
+pytest = "^6.0"
 flake8 = "^3.7.9"
 flake8-bugbear = "^20.1.0"
 black = "^19.10b0"
