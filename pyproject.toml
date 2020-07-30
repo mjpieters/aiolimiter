@@ -41,7 +41,7 @@ tox = "^3.14.1"
 pre-commit = "^2.0.0"
 mypy = "^0.780"
 doit = "^0.32.0"
-isort = {extras = ["pyproject"], version = "^4.3.21"}
+isort = {extras = ["pyproject"], version = "^5.2.1"}
 toml = "^0.10.0"
 twine = "^3.1.1"
 towncrier = "^19.2.0"
