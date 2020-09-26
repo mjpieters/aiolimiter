@@ -222,7 +222,7 @@ def task_docs():
 
 
 def task_build():
-    """Bulid the distribution packages"""
+    """Build the distribution packages"""
     yield {
         "name": "poetry",
         "setup": ["devsetup"],
