@@ -6,7 +6,7 @@ import asyncio
 from types import TracebackType
 from typing import Dict, Optional, Type
 
-from .compat import AsyncContextManagerBase, current_task, get_running_loop
+from .compat import AsyncContextManagerBase, current_task, get_running_loop, wait_for
 
 
 class AsyncLimiter(AsyncContextManagerBase):
@@ -94,7 +94,7 @@ class AsyncLimiter(AsyncContextManagerBase):
             fut = loop.create_future()
             self._waiters[task] = fut
             try:
-                await asyncio.wait_for(
+                await wait_for(
                     asyncio.shield(fut), 1 / self._rate_per_sec * amount, loop=loop
                 )
             except asyncio.TimeoutError:
