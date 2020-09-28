@@ -17,7 +17,6 @@ stages:
         - "3.6"
         - "3.7"
         - "3.8"
-        - "3.9"
 
   - template: stage-deploy.yml
     parameters:
@@ -25,6 +24,5 @@ stages:
         - "3.6"
         - "3.7"
         - "3.8"
-        - "3.9"
 
   - template: stage-publish.yml
