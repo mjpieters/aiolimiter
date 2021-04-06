@@ -42,7 +42,7 @@ doit = "^0.33.0"
 isort = "^5.2.1"
 toml = "^0.10.0"
 twine = "^3.1.1"
-towncrier = "^19.2.0"
+towncrier = "^21.3.0"
 
 [tool.poetry.dev-dependencies.black]
 version = "^20.8b0"
