@@ -7,8 +7,6 @@ pr: none
 variables:
   - group: codecov
   - group: twine
-  - name: poetry_home
-    value: $( format('{0}/.poetry', variables['Pipeline.Workspace']) )
 
 stages:
   - template: stage-lint.yml
