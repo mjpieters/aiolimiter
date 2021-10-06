@@ -5,9 +5,6 @@ parameters:
     - "Windows"
     - "Mac"
 
-variables:
-  - POETRY_HOME: $[ format('{0}/.poetry', variables['Pipeline.Workspace']) ]
-
 stages:
   - stage: build
     displayName: "Build"
