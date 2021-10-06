@@ -1,6 +1,3 @@
-variables:
-  - POETRY_HOME: $[ format('{0}/.poetry', variables['Pipeline.Workspace']) ]
-
 stages:
   - stage: lint
     displayName: "Lint"
