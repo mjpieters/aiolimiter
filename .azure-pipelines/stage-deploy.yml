@@ -5,6 +5,9 @@ parameters:
     - "Windows"
     - "Mac"
 
+variables:
+  - POETRY_HOME: $[ format('{0}/.poetry', variables['Pipeline.Workspace']) ]
+
 stages:
   - stage: build
     displayName: "Build"
@@ -39,7 +42,7 @@ stages:
 
           - bash: |
               curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
-              echo "##vso[task.prependpath]$HOME/.poetry/bin/"
+              echo "##vso[task.prependpath]$POETRY_HOME/bin/"
             displayName: Install Poetry
 
           - bash: poetry install
