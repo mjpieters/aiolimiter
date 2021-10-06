@@ -14,7 +14,8 @@ pr:
 
 variables:
   - group: codecov
-  - poetry_home: $[ format('{0}/.poetry', variables['Pipeline.Workspace']) ]
+  - name: poetry_home
+    value: $[ format('{0}/.poetry', variables['Pipeline.Workspace']) ]
 
 stages:
   - template: stage-lint.yml
