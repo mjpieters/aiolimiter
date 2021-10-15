@@ -14,6 +14,14 @@
 
 <!-- Towncrier release notes start -->
 
+## Aiolimiter 1.0.0 (2021-10-15)
+
+### Bugfixes
+
+- Avoid warnings on Python 3.8 and up by not passing in the loop to
+  ``asyncio.wait_for()``. ([#46](https://github.com/mjpieters/aiolimiter/issues/46))
+
+
 ## Aiolimiter 1.0.0b1 (2019-12-01)
 
 ### Improved Documentation

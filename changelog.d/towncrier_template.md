@@ -3,8 +3,10 @@
 {% if section %}## {{section}}
 
 {% endif %}
+
 {% if sections[section] %}
 {% for category, val in definitions.items() if category in sections[section]%}
+
 ### {{ definitions[category]['name'] }}
 
 {% if definitions[category]['showcontent'] %}

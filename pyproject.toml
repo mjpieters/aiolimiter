@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiolimiter"
-version = "1.0.0-beta.1"
+version = "1.0.0"
 description = "asyncio rate limiter, a leaky bucket implementation"
 license = "MIT"
 authors = ["Martijn Pieters <mj@zopatista.com>"]
