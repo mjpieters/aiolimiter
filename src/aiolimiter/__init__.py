@@ -6,7 +6,7 @@ try:
     # Python 3.8+
     from importlib.metadata import version  # type: ignore
 except ImportError:
-    # Python 3.6, 3.7
+    # Python 3.7
     from importlib_metadata import version  # type: ignore
 
 from .leakybucket import AsyncLimiter

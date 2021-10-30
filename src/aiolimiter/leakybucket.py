@@ -3,13 +3,14 @@
 # Licensed under the MIT license as detailed in LICENSE.txt
 
 import asyncio
+from contextlib import AbstractAsyncContextManager
 from types import TracebackType
 from typing import Dict, Optional, Type
 
-from .compat import AsyncContextManagerBase, current_task, get_running_loop, wait_for
+from .compat import wait_for
 
 
-class AsyncLimiter(AsyncContextManagerBase):
+class AsyncLimiter(AbstractAsyncContextManager):
     """A leaky bucket rate limiter.
 
     This is an :ref:`asynchronous context manager <async-context-managers>`;
@@ -43,7 +44,7 @@ class AsyncLimiter(AsyncContextManagerBase):
 
     def _leak(self) -> None:
         """Drip out capacity from the bucket."""
-        loop = get_running_loop()
+        loop = asyncio.get_running_loop()
         if self._level:
             # drip out enough level for the elapsed time since
             # we last checked
@@ -84,8 +85,8 @@ class AsyncLimiter(AsyncContextManagerBase):
         if amount > self.max_rate:
             raise ValueError("Can't acquire more than the maximum capacity")
 
-        loop = get_running_loop()
-        task = current_task(loop)
+        loop = asyncio.get_running_loop()
+        task = asyncio.current_task(loop)
         assert task is not None
         while not self.has_capacity(amount):
             # wait for the next drip to have left the bucket
