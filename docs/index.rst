@@ -85,7 +85,6 @@ The rate limit only kicks in once capacity has been reached::
    ...         print(f'{id:>2d}: Drip! {time.time() - ref:>5.2f}')
    ...
    >>> tasks = [task(i) for i in range(10)]
-   >>> tasks = [task(i) for i in range(10)]
    >>> ref = time.time(); result = asyncio.run(asyncio.wait(tasks))
     0: Drip!  0.00
     1: Drip!  0.01
