@@ -50,7 +50,6 @@ def test_attributes():
     assert limiter.time_period == 81
 
 
-@pytest.mark.asyncio
 async def test_has_capacity():
     limiter = AsyncLimiter(1)
     assert limiter.has_capacity()
@@ -60,7 +59,6 @@ async def test_has_capacity():
     assert not limiter.has_capacity()
 
 
-@pytest.mark.asyncio
 async def test_over_acquire():
     limiter = AsyncLimiter(1)
     with pytest.raises(ValueError):
@@ -77,7 +75,6 @@ async def async_contextmanager_task(limiter):
 
 
 @pytest.mark.parametrize("task", [acquire_task, async_contextmanager_task])
-@pytest.mark.asyncio
 async def test_acquire(event_loop, task):
     current_time = 0
 
