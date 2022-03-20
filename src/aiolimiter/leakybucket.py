@@ -27,7 +27,8 @@ class AsyncLimiter(AbstractAsyncContextManager):
     :param time_period: duration, in seconds, of the time period in which to
        limit the rate. Note that up to `max_rate` acquisitions are allowed
        within this time period in a burst.
-    :param start_filled: Whether to start with the bucket "full".
+    :param start_filled: Whether to start with the bucket "full"; setting to
+        `True` will prevent a "burst" at the beginning.
 
     """
 

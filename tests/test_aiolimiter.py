@@ -59,6 +59,17 @@ async def test_has_capacity():
     assert not limiter.has_capacity()
 
 
+async def test_fill():
+    limiter = AsyncLimiter(1)
+    limiter.fill()
+    assert not limiter.has_capacity()
+
+
+async def test_start_filled():
+    limiter = AsyncLimiter(1, start_filled=True)
+    assert not limiter.has_capacity()
+
+
 async def test_over_acquire():
     limiter = AsyncLimiter(1)
     with pytest.raises(ValueError):
