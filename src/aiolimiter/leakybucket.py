@@ -27,13 +27,14 @@ class AsyncLimiter(AbstractAsyncContextManager):
     :param time_period: duration, in seconds, of the time period in which to
        limit the rate. Note that up to `max_rate` acquisitions are allowed
        within this time period in a burst.
+    :param start_filled: Whether to start with the bucket "full".
 
     """
 
     max_rate: float  #: The configured `max_rate` value for this limiter.
     time_period: float  #: The configured `time_period` value for this limiter.
 
-    def __init__(self, max_rate: float, time_period: float = 60) -> None:
+    def __init__(self, max_rate: float, time_period: float = 60, start_filled: bool = False) -> None:
         self.max_rate = max_rate
         self.time_period = time_period
         self._rate_per_sec = max_rate / time_period
@@ -41,6 +42,9 @@ class AsyncLimiter(AbstractAsyncContextManager):
         self._last_check = 0.0
         # queue of waiting futures to signal capacity to
         self._waiters: Dict[asyncio.Task, asyncio.Future] = {}
+
+        if start_filled:
+            self.fill()
 
     def _leak(self) -> None:
         """Drip out capacity from the bucket."""
@@ -70,6 +74,12 @@ class AsyncLimiter(AbstractAsyncContextManager):
                     fut.set_result(True)
                     break
         return self._level + amount <= self.max_rate
+    
+    def fill(self) -> None:
+        """Fill the bucket."""
+        loop = asyncio.get_running_loop()
+        self._level = self.max_rate
+        self._last_check = loop.time()
 
     async def acquire(self, amount: float = 1) -> None:
         """Acquire capacity in the limiter.
