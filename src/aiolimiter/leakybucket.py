@@ -35,7 +35,12 @@ class AsyncLimiter(AbstractAsyncContextManager):
     max_rate: float  #: The configured `max_rate` value for this limiter.
     time_period: float  #: The configured `time_period` value for this limiter.
 
-    def __init__(self, max_rate: float, time_period: float = 60, start_filled: bool = False) -> None:
+    def __init__(
+        self,
+        max_rate: float,
+        time_period: float = 60,
+        start_filled: bool = False
+    ) -> None:
         self.max_rate = max_rate
         self.time_period = time_period
         self._rate_per_sec = max_rate / time_period
@@ -75,7 +80,7 @@ class AsyncLimiter(AbstractAsyncContextManager):
                     fut.set_result(True)
                     break
         return self._level + amount <= self.max_rate
-    
+
     def fill(self) -> None:
         """Fill the bucket."""
         loop = asyncio.get_running_loop()
