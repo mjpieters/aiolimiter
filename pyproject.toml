@@ -41,7 +41,7 @@ pre-commit = "^2.9.2"
 doit = "^0.34.0"
 isort = "^5.2.1"
 toml = "^0.10.0"
-twine = "^3.1.1"
+twine = "^4.0.0"
 towncrier = "^21.3.0"
 
 [tool.poetry.dev-dependencies.black]
