@@ -44,7 +44,7 @@ then use this object as an :ref:`asynchronous context manager
 <async-context-managers>`, so with :keyword:`async with`, to enclose a section
 you want to control the rate of execution of::
 
-    with limiter:
+    async with limiter:
         # this section will, at most, be entered 100 times / minute
 
 You can also call the :meth:`AsyncLimiter.acquire` async method directly::
