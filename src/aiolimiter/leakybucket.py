@@ -5,7 +5,7 @@
 import asyncio
 from contextlib import AbstractAsyncContextManager
 from types import TracebackType
-from typing import Dict, Optional, Type
+from typing import Callable, Dict, Optional, Type
 
 from .compat import wait_for
 
@@ -33,9 +33,15 @@ class AsyncLimiter(AbstractAsyncContextManager):
     max_rate: float  #: The configured `max_rate` value for this limiter.
     time_period: float  #: The configured `time_period` value for this limiter.
 
-    def __init__(self, max_rate: float, time_period: float = 60) -> None:
+    def __init__(
+        self,
+        max_rate: float,
+        time_period: float = 60,
+        on_timeout: Optional[Callable[[float], None]] = None,
+    ) -> None:
         self.max_rate = max_rate
         self.time_period = time_period
+        self.on_timeout = on_timeout
         self._rate_per_sec = max_rate / time_period
         self._level = 0.0
         self._last_check = 0.0
@@ -94,10 +100,11 @@ class AsyncLimiter(AbstractAsyncContextManager):
             # 'early' if capacity has come up
             fut = loop.create_future()
             self._waiters[task] = fut
+            timeout = 1 / self._rate_per_sec * amount
+            if self.on_timeout:
+                self.on_timeout(timeout)
             try:
-                await wait_for(
-                    asyncio.shield(fut), 1 / self._rate_per_sec * amount, loop=loop
-                )
+                await wait_for(asyncio.shield(fut), timeout, loop=loop)
             except asyncio.TimeoutError:
                 pass
             fut.cancel()
