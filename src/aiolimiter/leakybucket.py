@@ -30,6 +30,15 @@ class AsyncLimiter(AbstractAsyncContextManager):
 
     """
 
+    __slots__ = (
+        "max_rate",
+        "time_period",
+        "_rate_per_sec",
+        "_level",
+        "_last_check",
+        "_waiters",
+    )
+
     max_rate: float  #: The configured `max_rate` value for this limiter.
     time_period: float  #: The configured `time_period` value for this limiter.
 
