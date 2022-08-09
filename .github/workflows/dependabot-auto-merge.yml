@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/checkout@v3
       - name: Approve PR
-        if: ${{ steps.dependabot-metadata.outputs.package-ecosystem == 'github-actions' || steps.metadata.outputs.dependency-type == 'direct:development' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
+        if: ${{ steps.dependabot-metadata.outputs.package-ecosystem == 'github_actions' || steps.metadata.outputs.dependency-type == 'direct:development' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
         run: |
           gh pr checkout "$PR_URL" # sets the upstream metadata for `gh pr status`
           if [ "$(gh pr status --json reviewDecision -q .currentBranch.reviewDecision)" != "APPROVED" ];
@@ -28,7 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Enable auto-merge for Dependabot PRs
-        if: ${{ steps.dependabot-metadata.outputs.package-ecosystem == 'github-actions' || steps.metadata.outputs.dependency-type == 'direct:development' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
+        if: ${{ steps.dependabot-metadata.outputs.package-ecosystem == 'github_actions' || steps.metadata.outputs.dependency-type == 'direct:development' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
