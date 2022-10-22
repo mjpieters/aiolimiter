@@ -1,0 +1,2 @@
+Updated the version of black in the CI and pre-commit, and adjusted CI steps to
+account for recent versions of poetry.

@@ -97,7 +97,9 @@ stages:
           - bash: poetry install -E docs
             displayName: Install dependencies
 
-          - bash: poetry run doit -v2 docs
+          - bash: |
+              poetry run doit ignore _poetry_install  # don't uninstall the docs extra
+              poetry run doit -v2 docs
             displayName: "Run docs checker"
 
       - job: "twine"
