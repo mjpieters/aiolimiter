@@ -83,10 +83,9 @@ def with_poetry(*actions):
 def task_poetry_install():
     # in case we have doit installed outside of poetry
     # and there is no lock file, run poetry first.
-    extras = ["--extras", "docs"] if not ON_CI else []
     return {
         "basename": "_install_poetry",
-        "actions": [["poetry", "install", *extras]],
+        "actions": [["poetry", "install", "--extras", "docs"]],
         "targets": ["poetry.lock"],
         "uptodate": [run_once],
     }
