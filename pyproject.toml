@@ -33,7 +33,7 @@ toml = {version = "^0.10.0", optional = true}
 [tool.poetry.dev-dependencies]
 pytest = "^7.0"
 flake8 = "^5.0.3"
-flake8-bugbear = "^22.1.11"
+flake8-bugbear = "^23.1.17"
 pytest-asyncio = "^0.20.1"
 pytest-cov = "^4.0.0"
 tox = "^3.14.1"
