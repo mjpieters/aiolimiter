@@ -23,7 +23,7 @@ repos:
           - --license-filepath
           - .license_header.txt
         files: '\.py$'
-  - repo: https://gitlab.com/pycqa/flake8
+  - repo: https://github.com/pycqa/flake8
     rev: 3.8.3
     hooks:
       - id: flake8
