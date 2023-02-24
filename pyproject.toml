@@ -49,7 +49,7 @@ version = "^22.10.0"
 markers = "platform_python_implementation != 'PyPy'"
 
 [tool.poetry.dev-dependencies.mypy]
-version = "^0.931"
+version = "^1.0"
 markers = "platform_python_implementation != 'PyPy'"
 
 [tool.poetry.extras]
