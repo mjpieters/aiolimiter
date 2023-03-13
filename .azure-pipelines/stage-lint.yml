@@ -13,7 +13,7 @@ stages:
 
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: "3.7"
+              versionSpec: "3.11"
               architecture: "x64"
 
           - bash: |
@@ -38,7 +38,7 @@ stages:
 
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: "3.7"
+              versionSpec: "3.11"
               architecture: "x64"
 
           - bash: |
@@ -62,7 +62,7 @@ stages:
 
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: "3.7"
+              versionSpec: "3.11"
               architecture: "x64"
 
           - bash: |
@@ -86,7 +86,7 @@ stages:
 
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: "3.7"
+              versionSpec: "3.11"
               architecture: "x64"
 
           - bash: |
@@ -98,7 +98,7 @@ stages:
             displayName: Install dependencies
 
           - bash: |
-              poetry run doit ignore _poetry_install  # don't uninstall the docs extra
+              poetry run doit ignore _install_poetry  # don't uninstall the docs extra
               poetry run doit -v2 docs
             displayName: "Run docs checker"
 
