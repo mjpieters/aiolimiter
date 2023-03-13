@@ -22,8 +22,7 @@ def test_version():
     assert __version__
 
     pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
-    with pyproject as f:
-        metadata = toml.load(f)["tool"]["poetry"]
+    metadata = toml.load(pyproject)["tool"]["poetry"]
 
     # pyproject bumps to -alpha.0, -beta.1, etc., but releases a0, b1
     # We don't really need to care about those, just verify that sorta
