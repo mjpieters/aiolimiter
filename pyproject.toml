@@ -34,7 +34,7 @@ toml = {version = "^0.10.0", optional = true}
 pytest = "^7.0"
 flake8 = "^5.0.3"
 flake8-bugbear = "^23.1.20"
-pytest-asyncio = "^0.20.1"
+pytest-asyncio = "^0.21.0"
 pytest-cov = "^4.0.0"
 tox = "^3.14.1"
 pre-commit = "^2.9.2"
