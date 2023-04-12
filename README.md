@@ -68,7 +68,7 @@ or have some suggestions to improve the library.
 This project uses [poetry][] to manage dependencies, testing and releases. Make sure you have installed that tool, then run the following command to get set up:
 
 ```sh
-poetry install -E docs && poetry run doit devsetup
+poetry install --with docs && poetry run doit devsetup
 ```
 
 Apart from using `poetry run doit devsetup`, you can either use `poetry shell` to enter a shell environment with a virtualenv set up for you, or use `poetry run ...` to run commands within the virtualenv.

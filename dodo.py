@@ -85,7 +85,7 @@ def task_poetry_install():
     # and there is no lock file, run poetry first.
     return {
         "basename": "_install_poetry",
-        "actions": [["poetry", "install", "--extras", "docs"]],
+        "actions": [["poetry", "install", "--with", "docs"]],
         "targets": ["poetry.lock"],
         "uptodate": [run_once],
     }
