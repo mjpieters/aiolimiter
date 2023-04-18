@@ -94,7 +94,7 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - bash: poetry install -E docs
+          - bash: poetry install -G docs
             displayName: Install dependencies
 
           - bash: |
@@ -120,7 +120,7 @@ stages:
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
-          - bash: poetry install -E docs
+          - bash: poetry install -G docs
             displayName: Install dependencies
 
           - bash: poetry run doit -v2 build
