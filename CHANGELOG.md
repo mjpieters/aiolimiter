@@ -14,6 +14,27 @@
 
 <!-- Towncrier release notes start -->
 
+## Aiolimiter 1.1.0 (2023-05-08)
+
+
+
+### Features
+
+- Add ``__slots__`` to the ``AsyncLimiter`` class, reducing memory requirements. ([#85](https://github.com/mjpieters/aiolimiter/issues/85))
+
+
+
+### Deprecations and Removals
+
+- Dropped support for Python 3.6 ([#62](https://github.com/mjpieters/aiolimiter/issues/62))
+
+
+
+### Misc
+
+- [#95](https://github.com/mjpieters/aiolimiter/issues/95)
+
+
 ## Aiolimiter 1.0.0 (2021-10-15)
 
 ### Bugfixes
