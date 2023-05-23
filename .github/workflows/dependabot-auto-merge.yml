@@ -17,11 +17,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Approve PR
         # only auto-approve direct deps that are minor or patch updates
-        #   dependency type is indirect, direct:development or direct:production
         #   version-update is semver-major, semver-minor or semver-patch
-        if: |
-          steps.dependabot-metadata.outputs.dependency-type != 'indirect'
-          && steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
         run: |
           if [ "$(gh pr view "$PR_URL" --json reviewDecision -q .reviewDecision)" != "APPROVED" ]; then
             gh pr review --approve "$PR_URL"
