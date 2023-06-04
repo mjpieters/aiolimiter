@@ -18,6 +18,7 @@ stages:
               ${{ each os in parameters.operatingSystems }}:
                 ${{ format('Py{0} {1}', py, os) }}:
                   python.version: ${{ py }}
+                  operatingSystem: ${{ os }}
                   ${{ if eq(os, 'Linux') }}:
                     image: "ubuntu-latest"
                   ${{ if eq(os, 'Windows') }}:
@@ -59,9 +60,28 @@ stages:
             displayName: "Prepare coverage"
 
           - bash: |
-              poetry run pip install codecov
-              poetry run codecov -f coverage.xml -X gcov
+              curl -Os https://uploader.codecov.io/latest/linux/codecov
+              chmod +x codecov
+              ./codecov -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
             env:
               CODECOV_TOKEN: $(codecov.token)
-            condition: and(variables['codecov.token'], succeeded())
-            displayName: "Upload coverage reports"
+            condition: and(eq(variables.operatingSystem, 'Linux'), variables['codecov.token'], succeeded())
+            displayName: "Upload coverage reports (Linux)"
+
+          - bash: |
+              curl -Os https://uploader.codecov.io/latest/macos/codecov
+              chmod +x codecov
+              ./codecov -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
+            env:
+              CODECOV_TOKEN: $(codecov.token)
+            condition: and(eq(variables.operatingSystem, 'Mac'), variables['codecov.token'], succeeded())
+            displayName: "Upload coverage reports (MacOS)"
+
+          - pwsh: |
+              $ProgressPreference = 'SilentlyContinue'
+              Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+              .\codecov.exe -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
+            env:
+              CODECOV_TOKEN: $(codecov.token)
+            condition: and(eq(variables.operatingSystem, 'Windows'), variables['codecov.token'], succeeded())
+            displayName: "Upload coverage reports (Windows)"
