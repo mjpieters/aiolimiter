@@ -18,7 +18,7 @@ stages:
 
           - bash: |
               export POETRY_HOME="$PIPELINE_WORKSPACE/.poetry"
-              curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+              curl -sSL https://install.python-poetry.org | python -
               echo "##vso[task.prependpath]$POETRY_HOME/bin/"
             displayName: Install Poetry
 
@@ -42,7 +42,7 @@ stages:
               architecture: "x64"
 
           - bash: |
-              curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+              curl -sSL https://install.python-poetry.org | python -
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
@@ -66,7 +66,7 @@ stages:
               architecture: "x64"
 
           - bash: |
-              curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+              curl -sSL https://install.python-poetry.org | python -
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
@@ -90,7 +90,7 @@ stages:
               architecture: "x64"
 
           - bash: |
-              curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+              curl -sSL https://install.python-poetry.org | python -
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
@@ -116,7 +116,7 @@ stages:
               architecture: "x64"
 
           - bash: |
-              curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+              curl -sSL https://install.python-poetry.org | python -
               echo "##vso[task.prependpath]$HOME/.poetry/bin/"
             displayName: Install Poetry
 
