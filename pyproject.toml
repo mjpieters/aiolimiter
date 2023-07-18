@@ -56,6 +56,9 @@ sphinx-autodoc-typehints = "^1.10.3"
 sphinxcontrib-spelling = ">=4.3,<8.0"
 toml = "^0.10.0"
 
+[tool.black]
+target-versions = ["py37", "py38", "py39", "py310", "py311", "py312"]
+
 [tool.isort]
 line_length = 88
 known_third_party = ["pytest"]
