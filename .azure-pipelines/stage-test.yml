@@ -39,6 +39,7 @@ stages:
             inputs:
               versionSpec: "$(python.version)"
               architecture: "x64"
+              allowUnstable: true
 
           - bash: |
               export POETRY_HOME="$PIPELINE_WORKSPACE/.poetry"
