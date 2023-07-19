@@ -493,23 +493,21 @@ files = [
 
 [[package]]
 name = "doit"
-version = "0.34.2"
+version = "0.36.0"
 description = "doit - Automation Tool"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "doit-0.34.2-py3-none-any.whl", hash = "sha256:a7f414de4c596a96a727890e0792709a103f1af48e8180e27e07862fff781238"},
-    {file = "doit-0.34.2.tar.gz", hash = "sha256:388111f8a6a5b3b44620ceeb287d0585927c85d0d6d3f8790d34fbb45c0cf6c3"},
+    {file = "doit-0.36.0-py3-none-any.whl", hash = "sha256:ebc285f6666871b5300091c26eafdff3de968a6bd60ea35dd1e3fc6f2e32479a"},
+    {file = "doit-0.36.0.tar.gz", hash = "sha256:71d07ccc9514cb22fe59d98999577665eaab57e16f644d04336ae0b4bae234bc"},
 ]
 
 [package.dependencies]
 cloudpickle = "*"
-macfsevents = {version = "*", markers = "sys_platform == \"darwin\""}
-pyinotify = {version = "*", markers = "sys_platform == \"linux\""}
+importlib-metadata = ">=4.4"
 
 [package.extras]
-plugins = ["setuptools"]
-toml = ["toml (>=0.10.1)"]
+toml = ["tomli"]
 
 [[package]]
 name = "exceptiongroup"
@@ -763,16 +761,6 @@ SecretStorage = {version = ">=3.2", markers = "sys_platform == \"linux\""}
 completion = ["shtab"]
 docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
 testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
-
-[[package]]
-name = "macfsevents"
-version = "0.8.4"
-description = "Thread-based interface to file system observation primitives."
-optional = false
-python-versions = "*"
-files = [
-    {file = "MacFSEvents-0.8.4.tar.gz", hash = "sha256:bf7283f1d517764ccdc8195b21631dbbac1c506b920bf9a8ea2956b3127651cb"},
-]
 
 [[package]]
 name = "markdown-it-py"
@@ -1115,16 +1103,6 @@ files = [
 
 [package.extras]
 plugins = ["importlib-metadata"]
-
-[[package]]
-name = "pyinotify"
-version = "0.9.6"
-description = "Linux filesystem events monitoring"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pyinotify-0.9.6.tar.gz", hash = "sha256:9c998a5d7606ca835065cdabc013ae6c66eb9ea76a00a1e3bc6e0cfe2b4f71f4"},
-]
 
 [[package]]
 name = "pytest"
@@ -1723,4 +1701,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "371136375b6f1d8522c342f7503c05ccaf4607e890c0e9a9a7617f92e37288d3"
+content-hash = "ac3fe349c072ccfb285438045fed55450d8a27ff31f793a390d64b481415c854"
