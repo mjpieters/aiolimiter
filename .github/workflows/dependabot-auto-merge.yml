@@ -14,7 +14,7 @@ jobs:
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@v1.6.0
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Approve PR
         # only auto-approve direct deps that are minor or patch updates
         #   version-update is semver-major, semver-minor or semver-patch
