@@ -311,19 +311,6 @@ files = [
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
-name = "click-default-group"
-version = "1.2.2"
-description = "Extends click.Group to invoke a command without explicit subcommand name"
-optional = false
-python-versions = "*"
-files = [
-    {file = "click-default-group-1.2.2.tar.gz", hash = "sha256:d9560e8e8dfa44b3562fbc9425042a0fd6d21956fcc2db0077f63f34253ab904"},
-]
-
-[package.dependencies]
-click = "*"
-
-[[package]]
 name = "cloudpickle"
 version = "2.2.1"
 description = "Extended pickling support for Python objects"
@@ -1573,18 +1560,17 @@ files = [
 
 [[package]]
 name = "towncrier"
-version = "23.6.0"
+version = "23.10.0"
 description = "Building newsfiles for your project."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "towncrier-23.6.0-py3-none-any.whl", hash = "sha256:da552f29192b3c2b04d630133f194c98e9f14f0558669d427708e203fea4d0a5"},
-    {file = "towncrier-23.6.0.tar.gz", hash = "sha256:fc29bd5ab4727c8dacfbe636f7fb5dc53b99805b62da1c96b214836159ff70c1"},
+    {file = "towncrier-23.10.0-py3-none-any.whl", hash = "sha256:bc633438cb218e3c1fb502e8cd5d78fe7429276fa791ae36f6c8017fdbabb905"},
+    {file = "towncrier-23.10.0.tar.gz", hash = "sha256:8754e96264b55beca526a8ee77a3cc7b2170cfb2411f53eb6ac42e183ac96a17"},
 ]
 
 [package.dependencies]
 click = "*"
-click-default-group = "*"
 importlib-resources = {version = ">=5", markers = "python_version < \"3.10\""}
 incremental = "*"
 jinja2 = "*"
