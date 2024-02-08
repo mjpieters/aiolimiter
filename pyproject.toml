@@ -51,7 +51,7 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 sphinx = ">=4.2.0,<8.0.0"
 aiohttp-theme = "^0.1.6"
-sphinx-autodoc-typehints = "^1.10.3"
+sphinx-autodoc-typehints = ">=1.10.3,<3.0.0"
 sphinxcontrib-spelling = ">=4.3,<8.0"
 toml = "^0.10.0"
 
