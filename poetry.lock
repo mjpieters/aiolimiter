@@ -1611,13 +1611,13 @@ dev = ["furo", "packaging", "sphinx (>=5)", "twisted"]
 
 [[package]]
 name = "tox"
-version = "4.14.0"
+version = "4.14.2"
 description = "tox is a generic virtualenv management and test command line tool"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "tox-4.14.0-py3-none-any.whl", hash = "sha256:35976739e39e60e913bef4cf8226be64eb9eed6fdb9a44c6924265ebe11cbcae"},
-    {file = "tox-4.14.0.tar.gz", hash = "sha256:286807f8a581e55785dc30ff956a81583016625f6dd296948aa7a43001c1bb00"},
+    {file = "tox-4.14.2-py3-none-any.whl", hash = "sha256:2900c4eb7b716af4a928a7fdc2ed248ad6575294ed7cfae2ea41203937422847"},
+    {file = "tox-4.14.2.tar.gz", hash = "sha256:0defb44f6dafd911b61788325741cc6b2e12ea71f987ac025ad4d649f1f1a104"},
 ]
 
 [package.dependencies]
