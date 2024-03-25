@@ -24,7 +24,7 @@ include = ["CHANGELOG.md"]
 python = "^3.8"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
+pytest = ">=7,<9"
 flake8 = "^5.0.3"
 flake8-bugbear = "^23.1.20"
 pytest-asyncio = ">=0.21,<0.24"
