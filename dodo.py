@@ -73,9 +73,11 @@ def with_poetry(*actions):
         return actions
     # handle both shell and exec actions
     return [
-        f"poetry run {action}"
-        if isinstance(action, str)
-        else ["poetry", "run", *action]
+        (
+            f"poetry run {action}"
+            if isinstance(action, str)
+            else ["poetry", "run", *action]
+        )
         for action in actions
     ]
 
