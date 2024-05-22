@@ -36,7 +36,7 @@ async def wait_for_n_done(tasks, n):
     pending = tasks
     remainder = len(tasks) - n
     while time.time() <= start + WAIT_LIMIT and len(pending) > remainder:
-        done, pending = await asyncio.wait(
+        _, pending = await asyncio.wait(
             tasks, timeout=WAIT_LIMIT, return_when=asyncio.FIRST_COMPLETED
         )
     assert len(pending) >= remainder
