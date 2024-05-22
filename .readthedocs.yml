@@ -12,4 +12,9 @@ build:
       - pip install poetry
       - poetry config virtualenvs.create false
     post_install:
-      - poetry install --no-interaction --with docs
+      # Explicitly set VIRTUAL_ENV, because poetry has cleaned up virtual env
+      # as a work-around. See readthedocs/readthedocs.org#11150
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
+
+sphinx:
+  configuration: docs/conf.py
