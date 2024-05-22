@@ -13,7 +13,10 @@ classifiers = [
 	"Framework :: AsyncIO",
 	"Intended Audience :: Developers",
 ]
-include = ["CHANGELOG.md"]
+
+include = [
+    { path = "CHANGELOG.md", format = "sdist" },
+]
 
 [tool.poetry.urls]
 "CI: Azure Pipelines" = "https://dev.azure.com/mjpieters/aiolimiter/_build"
@@ -38,7 +41,7 @@ twine = ">=4,<6"
 towncrier = ">=22.8,<24.0"
 
 [tool.poetry.group.dev.dependencies.black]
-version = "^23.1.0"
+version = "^24.4.2"
 markers = "platform_python_implementation != 'PyPy'"
 
 [tool.poetry.group.dev.dependencies.mypy]
