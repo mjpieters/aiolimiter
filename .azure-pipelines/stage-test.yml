@@ -69,14 +69,15 @@ stages:
             condition: and(eq(variables.operatingSystem, 'Linux'), variables['codecov.token'], succeeded())
             displayName: "Upload coverage reports (Linux)"
 
-          - bash: |
-              curl -Os https://uploader.codecov.io/latest/macos/codecov
-              chmod +x codecov
-              ./codecov -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
-            env:
-              CODECOV_TOKEN: $(codecov.token)
-            condition: and(eq(variables.operatingSystem, 'Mac'), variables['codecov.token'], succeeded())
-            displayName: "Upload coverage reports (MacOS)"
+# Codecov-cli binary is incompatible with macos 12, it appears.
+#          - bash: |
+#              curl -Os https://uploader.codecov.io/latest/macos/codecov
+#              chmod +x codecov
+#              ./codecov -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
+#            env:
+#              CODECOV_TOKEN: $(codecov.token)
+#            condition: and(eq(variables.operatingSystem, 'Mac'), variables['codecov.token'], succeeded())
+#            displayName: "Upload coverage reports (MacOS)"
 
           - pwsh: |
               $ProgressPreference = 'SilentlyContinue'
