@@ -38,7 +38,7 @@ doit = ">=0.34,<0.37"
 isort = "^5.2.1"
 toml = "^0.10.0"
 twine = ">=4,<6"
-towncrier = ">=22.8,<24.0"
+towncrier = ">=22.8,<25.0"
 
 [tool.poetry.group.dev.dependencies.black]
 version = "^24.4.2"
