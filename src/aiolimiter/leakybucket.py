@@ -104,8 +104,16 @@ class AsyncLimiter(AbstractAsyncContextManager):
             fut = loop.create_future()
             self._waiters[task] = fut
             try:
+                # we need to wait until current_capacity is equal or greater than the
+                # requested amount, where current_capacity is
+                # (self.max_rate - self._level)
+                wait_time = (
+                    1 / self._rate_per_sec * (amount - self.max_rate + self._level)
+                )
                 await wait_for(
-                    asyncio.shield(fut), 1 / self._rate_per_sec * amount, loop=loop
+                    asyncio.shield(fut),
+                    wait_time,
+                    loop=loop,
                 )
             except asyncio.TimeoutError:
                 pass
