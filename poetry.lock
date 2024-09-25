@@ -2,13 +2,13 @@
 
 [[package]]
 name = "aiohttp-theme"
-version = "0.1.6"
+version = "0.1.7"
 description = "A configurable sidebar-enabled Sphinx theme"
 optional = false
 python-versions = "*"
 files = [
-    {file = "aiohttp-theme-0.1.6.tar.gz", hash = "sha256:5407cd110932cc6e45c39c26003bc2e398cea9a097a6ddbeb0dcae0679ac0ba1"},
-    {file = "aiohttp_theme-0.1.6-py2.py3-none-any.whl", hash = "sha256:e0af2758b116d0f180f37a8fc162e6ba43fa5fff000e3dcffdc0c7201bde7a3f"},
+    {file = "aiohttp_theme-0.1.7-py2.py3-none-any.whl", hash = "sha256:8869226607961a701782d601dc9c126c8dc75044a0b5aee30af0c1a2a8c98e8c"},
+    {file = "aiohttp_theme-0.1.7.tar.gz", hash = "sha256:c39f3e52f09a200bc8dd96be19752d922e8e3460dcc805d03bcf280778aeaa4c"},
 ]
 
 [[package]]
