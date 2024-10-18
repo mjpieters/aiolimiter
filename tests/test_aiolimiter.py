@@ -102,3 +102,15 @@ async def test_acquire(event_loop, task):
         current_time = 11  # releases the remainder
         pending = await wait_for_n_done(pending, 2)
         assert len(pending) == 0
+
+
+async def test_acquire_wait_time():
+    limiter = AsyncLimiter(3, 3)
+    # Fill the bucket with an amount of 1
+    await limiter.acquire(1)
+
+    # Acquiring an amount of 3 now should take 1s (+overhead)
+    start = time.perf_counter()
+    await limiter.acquire(3)
+    end = time.perf_counter()
+    assert end - start < 2
