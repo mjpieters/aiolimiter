@@ -74,7 +74,7 @@ async def async_contextmanager_task(limiter):
 
 
 @pytest.mark.parametrize("task", [acquire_task, async_contextmanager_task])
-async def test_acquire(event_loop, task):
+async def test_acquire(task):
     current_time = 0
 
     def mocked_time():
@@ -83,6 +83,7 @@ async def test_acquire(event_loop, task):
     # capacity released every 2 seconds
     limiter = AsyncLimiter(5, 10)
 
+    event_loop = asyncio.get_running_loop()
     with mock.patch.object(event_loop, "time", mocked_time):
         tasks = [asyncio.ensure_future(task(limiter)) for _ in range(10)]
 
