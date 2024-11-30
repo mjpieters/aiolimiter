@@ -61,28 +61,27 @@ stages:
             displayName: "Prepare coverage"
 
           - bash: |
-              curl -Os https://uploader.codecov.io/latest/linux/codecov
+              curl -Os https://cli.codecov.io/latest/linux/codecov
               chmod +x codecov
-              ./codecov -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
+              ./codecov --verbose upload-process --disable-search --token ${CODECOV_TOKEN} --file coverage.xml
             env:
               CODECOV_TOKEN: $(codecov.token)
             condition: and(eq(variables.operatingSystem, 'Linux'), variables['codecov.token'], succeeded())
             displayName: "Upload coverage reports (Linux)"
 
-# Codecov-cli binary is incompatible with macos 12, it appears.
-#          - bash: |
-#              curl -Os https://uploader.codecov.io/latest/macos/codecov
-#              chmod +x codecov
-#              ./codecov -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
-#            env:
-#              CODECOV_TOKEN: $(codecov.token)
-#            condition: and(eq(variables.operatingSystem, 'Mac'), variables['codecov.token'], succeeded())
-#            displayName: "Upload coverage reports (MacOS)"
+          - bash: |
+              curl -Os https://cli.codecov.io/latest/macos/codecov
+              chmod +x codecov
+              ./codecov --verbose upload-process --disable-search --token ${CODECOV_TOKEN} --file coverage.xml
+            env:
+              CODECOV_TOKEN: $(codecov.token)
+            condition: and(eq(variables.operatingSystem, 'Mac'), variables['codecov.token'], succeeded())
+            displayName: "Upload coverage reports (MacOS)"
 
           - pwsh: |
               $ProgressPreference = 'SilentlyContinue'
-              Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-              .\codecov.exe -t ${CODECOV_TOKEN} -f coverage.xml -X gcov
+              Invoke-WebRequest -Uri https://cli.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+              .\codecov.exe --% --verbose upload-process --disable-search --token ${CODECOV_TOKEN} --file coverage.xml
             env:
               CODECOV_TOKEN: $(codecov.token)
             condition: and(eq(variables.operatingSystem, 'Windows'), variables['codecov.token'], succeeded())
