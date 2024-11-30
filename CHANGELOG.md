@@ -14,6 +14,21 @@
 
 <!-- Towncrier release notes start -->
 
+## Aiolimiter 1.1.1 (2024-11-30)
+
+
+### Bugfixes
+
+- Only include CHANGELOG.md in the source distribution. ([#206](https://github.com/mjpieters/aiolimiter/issues/206))
+- Fixed wait time calculation for waiting tasks, making acquisition faster (PR by @schoennenbeck) ([#217](https://github.com/mjpieters/aiolimiter/issues/217))
+
+
+
+### Misc
+
+- [#139](https://github.com/mjpieters/aiolimiter/issues/139), [#288](https://github.com/mjpieters/aiolimiter/issues/288)
+
+
 ## Aiolimiter 1.1.0 (2023-05-08)
 
 
