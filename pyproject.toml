@@ -59,7 +59,7 @@ sphinxcontrib-spelling = ">=4.3,<8.0"
 toml = "^0.10.0"
 
 [tool.black]
-target-versions = ["py37", "py38", "py39", "py310", "py311", "py312"]
+target-version = ["py37", "py38", "py39", "py310", "py311", "py312", "py313"]
 
 [tool.isort]
 line_length = 88
