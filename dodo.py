@@ -159,7 +159,7 @@ def task_tox():
     return {
         "setup": ["devsetup"],
         "actions": [Interactive(test_cmd)],
-        "file_dep": [*SRC_FILES, *TESTS_FILES],
+        "file_dep": [*SRC_FILES, *TESTS_FILES, HERE / "tox.ini"],
         "task_dep": ["lint"],
     }
 
