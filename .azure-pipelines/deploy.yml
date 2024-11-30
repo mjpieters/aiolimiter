@@ -18,7 +18,8 @@ stages:
         - "3.9"
         - "3.10"
         - "3.11"
-        - "3.12.0-beta.4"
+        - "3.12.0"
+        - "3.13.0"
 
   - template: stage-deploy.yml
     parameters:
@@ -27,6 +28,7 @@ stages:
         - "3.9"
         - "3.10"
         - "3.11"
-        - "3.12.0-beta.4"
+        - "3.12"
+        - "3.13"
 
   - template: stage-publish.yml
