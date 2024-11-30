@@ -7,8 +7,6 @@ from contextlib import AbstractAsyncContextManager
 from types import TracebackType
 from typing import Dict, Optional, Type
 
-from .compat import wait_for
-
 
 class AsyncLimiter(AbstractAsyncContextManager):
     """A leaky bucket rate limiter.
@@ -104,8 +102,8 @@ class AsyncLimiter(AbstractAsyncContextManager):
             fut = loop.create_future()
             self._waiters[task] = fut
             try:
-                await wait_for(
-                    asyncio.shield(fut), 1 / self._rate_per_sec * amount, loop=loop
+                await asyncio.wait_for(
+                    asyncio.shield(fut), 1 / self._rate_per_sec * amount
                 )
             except asyncio.TimeoutError:
                 pass
