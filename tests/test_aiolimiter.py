@@ -30,21 +30,6 @@ def test_version():
     assert __version__.startswith(metadata["version"].partition("-")[0])
 
 
-async def wait_for_n_done(tasks, n):
-    """Wait for n (or more) tasks to have completed"""
-    iteration = 0
-    remainder = len(tasks) - n
-    while iteration <= MAX_WAIT_FOR_ITER:
-        iteration += 1
-        _, pending = await asyncio.wait(
-            tasks, timeout=0, return_when=asyncio.FIRST_COMPLETED
-        )
-        if len(pending) <= remainder:
-            break
-    assert len(pending) <= remainder
-    return pending
-
-
 def test_attributes():
     limiter = AsyncLimiter(42, 81)
     assert limiter.max_rate == 42
@@ -73,6 +58,25 @@ async def acquire_task(limiter):
 async def async_contextmanager_task(limiter):
     async with limiter:
         pass
+
+
+async def wait_for_n_done(tasks, n):
+    """Wait for n (or more) tasks to have completed"""
+    iteration = 0
+    remainder = len(tasks) - n
+    pending_count = len(tasks)
+    while iteration <= MAX_WAIT_FOR_ITER:
+        iteration += 1
+        _, pending = await asyncio.wait(
+            tasks, timeout=0, return_when=asyncio.FIRST_COMPLETED
+        )
+        if len(pending) <= remainder:
+            break
+        if len(pending) < pending_count:
+            iteration = 0
+            pending_count = len(pending)
+    assert len(pending) <= remainder
+    return pending
 
 
 class MockLoopTime:
@@ -132,4 +136,47 @@ async def test_acquire_wait_time():
 
         mocked_time.current_time = 1
         pending = await wait_for_n_done([task], 1)
+        assert not pending
+
+
+async def test_decreasing_acquire():
+    limiter = AsyncLimiter(3, 3)
+    with MockLoopTime() as mocked_time:
+        # Fill the bucket with an amount of 1
+        await limiter.acquire(1)
+
+        # Acquiring an amount of 3 would take 1 second
+        task = asyncio.ensure_future(limiter.acquire(3))
+        pending = await wait_for_n_done([task], 0)
+        assert pending
+
+        # _Unless_ a lower amount is acquired in-between
+        # increasing the wait time to 2 seconds
+        await limiter.acquire(1)
+
+        mocked_time.current_time = 1
+        pending = await wait_for_n_done([task], 0)
+        assert pending
+
+        mocked_time.current_time = 2
+        pending = await wait_for_n_done([task], 1)
+        assert not pending
+
+
+async def test_task_cancelled():
+    limiter = AsyncLimiter(3, 3)
+    with MockLoopTime() as mocked_time:
+        # Fill the bucket with an amount of 1
+        await limiter.acquire(1)
+
+        # Two tasks asking for an amount of 3 would take 4 seconds
+        tasks = [asyncio.ensure_future(limiter.acquire(3)) for _ in range(2)]
+        pending = await wait_for_n_done(tasks, 0)
+        assert pending
+
+        # But if the first one is cancelled, it should only take 1 second for
+        # the second to finish
+        tasks[0].cancel()
+        mocked_time.current_time = 1
+        pending = await wait_for_n_done(tasks[1:], 1)
         assert not pending
