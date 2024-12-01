@@ -14,6 +14,16 @@
 
 <!-- Towncrier release notes start -->
 
+## Aiolimiter 1.2.0 (2024-12-01)
+
+
+### Bugfixes
+
+- Improve performance by using a single timeout and a heapq for blocked tasks.
+  This ensures only a single task needs to wake up per 'drip' of the bucket,
+  instead of creating timeouts for every task. ([#73](https://github.com/mjpieters/aiolimiter/issues/73))
+
+
 ## Aiolimiter 1.1.1 (2024-11-30)
 
 
