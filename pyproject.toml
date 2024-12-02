@@ -37,7 +37,7 @@ pre-commit = ">=2.9.2,<4.0.0"
 doit = ">=0.34,<0.37"
 isort = "^5.2.1"
 toml = "^0.10.0"
-twine = ">=4,<6"
+twine = ">=4,<7"
 towncrier = ">=22.8,<25.0"
 
 [tool.poetry.group.dev.dependencies.black]
