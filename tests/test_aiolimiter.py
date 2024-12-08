@@ -180,3 +180,20 @@ async def test_task_cancelled():
         mocked_time.current_time = 1
         pending = await wait_for_n_done(tasks[1:], 1)
         assert not pending
+
+
+def test_multiple_loops():
+    limiter = AsyncLimiter(1, 1)
+
+    async def task():
+        # ensure a task has to wait
+        tasks = [asyncio.ensure_future(limiter.acquire()) for _ in range(5)]
+        await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=0)
+
+    asyncio.run(task())
+
+    with pytest.warns(
+        RuntimeWarning,
+        match="This AsyncLimiter instance is being re-used across loops.",
+    ):
+        asyncio.run(task())
