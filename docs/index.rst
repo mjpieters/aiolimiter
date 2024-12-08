@@ -38,7 +38,8 @@ the maximum capacity that can be acquired in one minute::
 
     from aiolimiter import AsyncLimiter
 
-    limiter = AsyncLimiter(100)
+    async def main():
+        limiter = AsyncLimiter(100)
 
 then use this object as an :ref:`asynchronous context manager
 <async-context-managers>`, so with :keyword:`async with`, to enclose a section
@@ -56,6 +57,15 @@ or you can simply test if there is space first by calling
 
    if limit.has_capacity():
        # reject a request due to rate limiting
+
+.. note::
+    You want to create ``AsyncLimiter`` instances *per asyncio loop*.
+
+    Re-using a limiter across asyncio loops is not supported and can lead to
+    undefined behaviour. `AsyncLimiter` issues a `RuntimeWarning` and clears
+    its internal bookkeeping of waiting tasks when it detects it is being
+    reused across loops, but no guarantees are being made for how well this
+    will work.
 
 Varying capacity requests
 -------------------------

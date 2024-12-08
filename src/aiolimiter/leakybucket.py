@@ -3,12 +3,36 @@
 # Licensed under the MIT license as detailed in LICENSE.txt
 
 import asyncio
+import os
+import sys
+import warnings
 from contextlib import AbstractAsyncContextManager
 from functools import partial
 from heapq import heappop, heappush
 from itertools import count
 from types import TracebackType
 from typing import List, Optional, Tuple, Type
+
+LIMITER_REUSED_ACROSS_LOOPS_WARNING = (
+    "This AsyncLimiter instance is being re-used across loops. Please create "
+    "a new limiter per event loop as re-use can lead to undefined behaviour."
+)
+
+if sys.version_info >= (3, 12):  # pragma: no cover
+    _warn_reuse = partial(
+        warnings.warn,
+        message=LIMITER_REUSED_ACROSS_LOOPS_WARNING,
+        category=RuntimeWarning,
+        skip_file_prefixes=(os.path.dirname(__file__),),
+    )
+else:
+    # no support for dynamic stack levels, disable stack location
+    _warn_reuse = partial(
+        warnings.warn,
+        message=LIMITER_REUSED_ACROSS_LOOPS_WARNING,
+        category=RuntimeWarning,
+        stacklevel=0,
+    )
 
 
 class AsyncLimiter(AbstractAsyncContextManager):
@@ -65,6 +89,18 @@ class AsyncLimiter(AbstractAsyncContextManager):
         self._event_loop: asyncio.AbstractEventLoop
         try:
             loop = self._event_loop
+            if loop.is_closed():
+                # limiter is being reused across loops; make a best-effort
+                # attempt at recovery. Existing waiters are ditched, with
+                # the assumption that they are no longer viable.
+                loop = self._event_loop = asyncio.get_running_loop()
+                self._waiters = [
+                    (amt, cnt, fut)
+                    for amt, cnt, fut in self._waiters
+                    if fut.get_loop() == loop
+                ]
+                _warn_reuse()
+
         except AttributeError:
             loop = self._event_loop = asyncio.get_running_loop()
         return loop
