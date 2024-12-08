@@ -14,6 +14,14 @@
 
 <!-- Towncrier release notes start -->
 
+## Aiolimiter 1.2.1 (2024-12-08)
+
+
+### Bugfixes
+
+- Issue a `RuntimeWarning` and reset internal waiter state when being reused across asyncio loops. ([#292](https://github.com/mjpieters/aiolimiter/issues/292))
+
+
 ## Aiolimiter 1.2.0 (2024-12-01)
 
 
