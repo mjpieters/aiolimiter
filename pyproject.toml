@@ -20,7 +20,7 @@ include = [
 
 [tool.poetry.urls]
 "CI: Azure Pipelines" = "https://dev.azure.com/mjpieters/aiolimiter/_build"
-"Coverage: codecov" = "https://codecov.io/github/aiolimiter/aiosignal"
+"Coverage: codecov" = "https://codecov.io/github/mjpieters/aiolimiter"
 "GitHub: issues" = "https://github.com/mjpieters/aiolimiter/issues"
 
 [tool.poetry.dependencies]
