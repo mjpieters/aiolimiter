@@ -142,9 +142,15 @@ async def test_acquire_wait_time() -> None:
         pending = await wait_for_n_done([task], 0)
         assert pending
 
+        assert limiter.has_capacity()
+        assert limiter.estimated_wait_time() == 0
+
         mocked_time.current_time = 1
         pending = await wait_for_n_done([task], 1)
         assert not pending
+
+        assert not limiter.has_capacity()
+        assert limiter.estimated_wait_time() == 2
 
 
 async def test_decreasing_acquire() -> None:
