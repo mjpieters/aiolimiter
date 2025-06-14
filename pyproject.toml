@@ -16,6 +16,7 @@ classifiers = [
 
 include = [
     { path = "CHANGELOG.md", format = "sdist" },
+    { path = "tests", format = "sdist" },
 ]
 
 [tool.poetry.urls]
