@@ -7,7 +7,21 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
-import toml
+
+try:
+    import tomllib
+
+    def toml_load_path(path: Path):
+        with open(path, "rb") as f:
+            data = tomllib.load(f)
+        return data
+
+except ImportError:
+    import toml
+
+    def toml_load_path(path: Path):
+        return toml.load(path)
+
 
 from aiolimiter import AsyncLimiter
 
@@ -22,7 +36,7 @@ def test_version():
     assert __version__
 
     pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
-    metadata = toml.load(pyproject)["tool"]["poetry"]
+    metadata = toml_load_path(pyproject)["tool"]["poetry"]
 
     # pyproject bumps to -alpha.0, -beta.1, etc., but releases a0, b1
     # We don't really need to care about those, just verify that sorta
