@@ -119,7 +119,12 @@ description = "Run test under {base_python}"
 commands = [["pytest"]]
 
 [tool.pytest.ini_options]
-addopts = ["--cov=aiolimiter", "--cov-report=term-missing"]
+addopts = [
+    "--cov",
+    "--cov-report=term",
+    "--cov-report=xml",
+    "--no-cov-on-fail",
+]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
