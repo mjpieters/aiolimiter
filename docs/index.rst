@@ -19,12 +19,12 @@ Installation
 
    $ pip install aiolimiter
 
-The library requires Python 3.8 or newer.
+The library requires Python |requires-python| or newer.
 
 Requirements
 ------------
 
-- Python >= 3.8
+- Python >= |requires-python|
 
 
 Usage

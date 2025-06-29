@@ -1,0 +1,222 @@
+name: Python checks
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [v*]
+  pull_request:
+  merge_group:
+
+env:
+  FORCE_COLOR: 1
+
+permissions:
+  contents: read
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    name: "Python linting"
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@bd01e18f51369d5a26f1651c3cb451d3417e3bba # v6.3.1
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 🐍
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: Check lock is up-to-date
+      run: |
+        uv lock --check
+
+    - name: Install dependencies
+      run: |
+        uv sync
+        echo "$PWD/.venv/bin" >> $GITHUB_PATH
+
+    - name: Check file formatting
+      uses: astral-sh/ruff-action@eaf0ecdd668ceea36159ff9d91882c9795d89b49 # v3.4.0
+      with:
+        args: "format --check"
+
+    - name: Lint with ruff
+      env:
+        RUFF_OUTPUT_FORMAT: github
+      run: |
+        ruff check
+
+    - name: Typecheck with pyright
+      uses: jakebailey/pyright-action@b5d50e5cde6547546a5c4ac92e416a8c2c1a1dfe # v2.3.2
+      with:
+        version: PATH
+
+    - name: Check documentation
+      run: |
+        for file in changelog.d/*; do
+          if [[ "$file" == changelog.d/towncrier_template.md ]]; then
+            continue
+          fi
+          if [[ ! "$file" =~ /[0-9]+\.(feature|bugfix|doc|removal|misc)(\.md)?$ ]]; then
+            echo -e "Not a valid towncrier fragment name: \e[1;33m{{.ITEM}}\e[0m"
+            echo 'Towncrier fragments consist of the GitHub issue number, a dot, and a type (feature, bugfix, doc, removal, misc), optionally followed by .md.'
+            exit 1
+          fi
+        done
+        uv run towncrier build --draft
+        cd docs || exit 1
+        make spelling
+
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "windows-latest", "macos-latest"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    name: Python tests (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@bd01e18f51369d5a26f1651c3cb451d3417e3bba  # v6.3.1
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up Python ${{ matrix.python-version }} 🐍
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Test with pytest
+      run: |
+        # codecov requires that the test results are shared in xunit1 / legacy format.
+        uv run pytest -v --junitxml=junit.xml -o junit_family=legacy
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/test-results-action@47f89e9acb64b76debcd5ea40642d25a4adced9f  # v1.1.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-summary:
+    name: Test matrix status
+    runs-on: ubuntu-latest
+    needs:
+      - linting
+      - tests
+    if: always()
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
+      with:
+        jobs: ${{ toJSON(needs) }}
+
+
+  build:
+    name: Build distribution 📦
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs:
+      - test-summary
+
+    outputs:
+      version: ${{ steps.note.outputs.version }}
+      prerelease: ${{ steps.note.outputs.prerelease }}
+
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@bd01e18f51369d5a26f1651c3cb451d3417e3bba # v6.3.1
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 🐍
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: Install dependencies
+      run: |
+        uv sync
+
+    - name: Build the Python 🐍 binary wheel and source tarball 📦
+      id: build-dist
+      run: |
+        uv build
+        rm -f dist/.gitignore  # get-releasenotes can't handle non-dist files here
+        echo "version=$(uvx hatch version)" >> $GITHUB_OUTPUT
+
+    - name: Check build
+      run: uvx twine check --strict dist/*
+
+    - name: Prepare Release Note
+      id: note
+      uses: aio-libs/get-releasenote@b0fcc7f3e5f5cc7c8b01e2f75516b1732f6bd8b2 # v1.4.5
+      with:
+        changes_file: CHANGELOG.md
+        output_file: release_notes.md
+        version: ${{ steps.build-dist.outputs.version }}
+        start_line: '<!-- changes go below this line -->'
+        head_line: '## \[{version}\] - {date}'
+        name: Aiolimiter
+        dist_dir: dist
+
+    - name: Store the Python 🐍 distribution 📦
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: python-package-distributions
+        path: |
+          dist/
+          release_notes.md
+
+  pypi-publish:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs:
+      - build
+    environment:
+      name: pypi
+      url: https://pypi.org/p/aiolimiter
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      contents: write  # required for creating GH releases
+
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Download Python 🐍 distribution 📦
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+      with:
+        name: python-package-distributions
+
+    - name: Publish Python 🐍 distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+
+    - name: GitHub release
+      uses: ncipollo/release-action@9128f238eeeeed39b82af6636303729079d51730 # v1.17.0
+      with:
+        name: Aiolimiter ${{ needs.build.outputs.version }}
+        bodyFile: release_notes.md
+        artifacts: dist/*
+        prerelease: ${{ needs.build.outputs.prerelease }}
