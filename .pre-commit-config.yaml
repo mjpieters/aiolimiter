@@ -1,11 +1,30 @@
 default_language_version:
-  python: python3.11
+  python: python3.12
 minimum_pre_commit_version: 1.14.0
+default_install_hook_types:
+  - pre-commit
+  - post-checkout
+  - post-merge
+  - post-rewrite
 repos:
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.16
     hooks:
-      - id: black
+      - id: uv-lock
+      - id: uv-sync
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.1
+    hooks:
+      - id: ruff-format
+      - id: ruff-check
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.402
+    hooks:
+    - id: pyright
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 41.15.0
+    hooks:
+      - id: renovate-config-validator
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -22,12 +41,8 @@ repos:
           - --license-filepath
           - .license_header.txt
         files: '\.py$'
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-        additional_dependencies: [flake8-bugbear]
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
+ci:
+  autofix_prs: false
+  skip:
+    - renovate-config-validator
+    - pyright

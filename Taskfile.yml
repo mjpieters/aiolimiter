@@ -1,0 +1,244 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  PROJECT_NAME: "aiolimiter"
+
+tasks:
+  # utility tasks
+  util:check_uv:
+    desc: Check that UV is installed and print its version
+    internal: true
+    run: once
+    preconditions:
+      - sh: type "uv" &>/dev/null
+        msg: Please install uv, see https://docs.astral.sh/uv/getting-started/installation/
+    cmds:
+      - uv --version
+
+  # development
+  dev:install-precommit:
+    desc: Install pre-commit into local git checkout
+    run: once
+    status:
+      - grep -q 'pre-commit\.com' .git/hooks/*
+    cmds:
+      - uv run pre-commit install
+
+  dev:test:
+    aliases:
+      - test
+    desc: Run tests
+    run: always
+    deps: ['util:check_uv']
+    cmds:
+      - uv run pytest {{.CLI_ARGS}}
+
+  dev:tox:
+    aliases:
+      - tox
+    desc: Run tests with tox
+    run: always
+    deps: ['util:check_uv']
+    cmds:
+      - uv run tox {{.CLI_ARGS}}
+
+  dev:lint:renovate:
+    desc: Lint the Renovate configuration file
+    sources:
+      - .github/renovate.json
+    deps:
+      - dev:install-precommit
+    cmds:
+      - pre-commit run --files .github/renovate.json renovate-config-validator
+
+  dev:lint:code:
+    desc: Lint the source code
+    run: always
+    deps: ['util:check_uv']
+    preconditions:
+      - |
+        uv lock --locked || {
+          echo -e '\033[0;31mThe lockfile at `uv.lock` needs to be updated. To update the lockfile, run `task lock`\033[0m'.
+          exit 1
+        } >&2
+    cmds:
+      - uv run ruff format --check
+      - uv run ruff check {{.CLI_ARGS}}
+      - uv run pyright
+
+  dev:lint:
+    aliases:
+      - lint
+    desc: Runs linters
+    deps:
+      - dev:lint:code
+      - dev:lint:renovate
+
+  dev:format:
+    aliases:
+      - format
+    desc: Runs formatters
+    sources:
+      - pyproject.toml
+      - src/**
+      - tests/**
+    cmds:
+      - uv run ruff format {{.CLI_ARGS}}
+
+  dev:uv-lock:
+    aliases:
+      - lock
+    desc: Updates the uv lock file
+    deps: ['util:check_uv']
+    sources:
+      - pyproject.toml
+    generates:
+      - pyproject.toml
+      - uv.lock
+    cmds:
+      - uv lock
+
+  # packaging
+  dist:build:
+    aliases:
+      - dist
+    desc: Build the distribution packages
+    deps: ['util:check_uv']
+    sources:
+      - uv.lock
+      - pyproject.toml
+      - README.md
+      - LICENSE.txt
+      - CHANGELOG.txt
+      - src/**
+      - tests/**
+    generates:
+      - dist/{{.PROJECT_NAME}}-*.tar.gz
+      - dist/{{.PROJECT_NAME}}-*-py3-none-any.whl
+    status:
+      - test dist/{{.PROJECT_NAME}}-$(uvx hatch version).tar.gz
+      - test dist/{{.PROJECT_NAME}}-$(uvx hatch version)-py3-none-any.whl
+    env:
+      UV_NO_SYNC: 1
+      UV_FROZEN: 1
+    cmds:
+      - |
+        echo 'Building distribution packages for {{.PROJECT_NAME}}'
+        uv build {{.CLI_ARGS}}
+
+  dist:clean:
+    aliases:
+      - clean
+    desc: Remove built distribution packages
+    dir: dist/
+    sources:
+      - '{{.PROJECT_NAME}}-*.tar.gz'
+      - '{{.PROJECT_NAME}}-*-py3-none-any.whl'
+    cmds:
+      - for: sources
+        cmd: rm {{.ITEM}}
+
+  dist:publish:
+    aliases:
+      - publish
+    desc: Publish package to PyPI
+    deps: ['util:check_uv', 'dist:build']
+    env:
+      UV_NO_SYNC: 1
+      UV_FROZEN: 1
+    cmds:
+      - |
+        LIB_VERSION=$(uvx hatch version)
+        echo "Publishing distribution packages for {{.PROJECT_NAME}}, version ${LIB_VERSION}"
+        uvx twine check "dist/{{.PROJECT_NAME}}-${LIB_VERSION}.tar.gz" "dist/{{.PROJECT_NAME}}-${LIB_VERSION}-py3-none-any.whl"
+        uv publish {{.CLI_ARGS}}
+
+  # documentation
+  docs:checks:spelling:
+    desc: Check documentation spelling.
+    deps: ['util:check_uv']
+    sources:
+      - src/**
+      - docs/**/*.rst
+      - docs/conf.py
+      - docs/Makefile
+      - docs/spelling_wordlist.txt
+    dir: docs/
+    cmds:
+      - make spelling {{.CLI_ARGS}}
+
+  docs:checks:towncrier_fragments:
+    desc: Check changelog towncrier fragments
+    deps: ['util:check_uv']
+    method: none
+    sources:
+      - changelog.d/**
+      - exclude: changelog.d/towncrier_template.md
+    cmds:
+      - for: sources
+        cmd: |
+          if [[ ! "{{.ITEM}}" =~ /[0-9]+\.(feature|bugfix|doc|removal|misc)(\.md)?$ ]]; then
+            echo -e "Not a valid towncrier fragment name: \e[1;33m{{.ITEM}}\e[0m"
+            echo 'Towncrier fragments consist of the GitHub issue number, a dot, and a type (feature, bugfix, doc, removal, misc), optionally followed by .md.'
+            exit 1
+          fi
+
+  docs:checks:towncrier:
+    desc: Check changelog towncrier output()
+    deps: ['util:check_uv']
+    method: none
+    sources:
+      - changelog.d/**
+      - pyproject.toml
+    cmds:
+      - uv run towncrier build --draft
+
+  docs:checks:
+    desc: Run all documentation checks
+    deps:
+      - docs:checks:spelling
+      - docs:checks:towncrier_fragments
+
+  docs:serve:
+    aliases:
+      - preview
+    desc: Live preview server for project documentation
+    preconditions:
+      - |
+        uv sync --group docs --check 2> /dev/null || uv sync --group docs
+    deps: ['util:check_uv']
+    cmds:
+      - uv run sphinx-autobuild docs docs/_build/html {{.CLI_ARGS}}
+
+  docs:build:
+    aliases:
+      - docs
+    desc: Build project documentation
+    preconditions:
+      - |
+        uv sync --group docs --check 2> /dev/null || uv sync --group docs
+    deps: ['util:check_uv']
+    sources:
+      - src/**
+      - docs/**/*.rst
+      - docs/conf.py
+      - docs/Makefile
+    generates:
+      - docs/_build/html/**
+    dir: docs/
+    cmds:
+      - make html {{.CLI_ARGS}}
+
+  docs:clean:
+    desc: Clean the documentation build directory
+    dir: docs/
+    cmds:
+      - make clean
+
+  default:
+    desc: Default task, runs linters and tests
+    deps:
+      - dev:lint
+      - dev:test

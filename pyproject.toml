@@ -1,70 +1,128 @@
-[tool.poetry]
+[project]
 name = "aiolimiter"
-version = "1.2.1"
 description = "asyncio rate limiter, a leaky bucket implementation"
-license = "MIT"
-authors = ["Martijn Pieters <mj@zopatista.com>"]
+requires-python = ">=3.9"
+
+authors = [
+    {name = "Martijn Pieters", email = "mj@zopatista.com"}
+]
+
 readme = "README.md"
-homepage = "https://github.com/mjpieters/aiolimiter"
-repository = "https://github.com/mjpieters/aiolimiter"
-documentation = "http://aiolimiter.readthedocs.org/en/stable/"
-keywords = ["asyncio", "rate-limiting", "leaky-bucket"]
+license = "MIT"
+license-files = ["LICENSE.txt"]
+
+keywords = [
+    "asyncio",
+    "rate-limiting",
+    "leaky-bucket",
+]
 classifiers = [
-	"Framework :: AsyncIO",
-	"Intended Audience :: Developers",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
 ]
 
-include = [
-    { path = "CHANGELOG.md", format = "sdist" },
-    { path = "tests", format = "sdist" },
-]
+dynamic = ["version"]
 
-[tool.poetry.urls]
-"CI: Azure Pipelines" = "https://dev.azure.com/mjpieters/aiolimiter/_build"
+[project.urls]
+Homepage = "https://github.com/mjpieters/aiolimiter"
+Repository = "https://github.com/mjpieters/aiolimiter"
+Documentation = "http://aiolimiter.readthedocs.org/en/stable/"
+Issues = "https://github.com/mjpieters/aiolimiter/issues"
+Changelog = "https://github.com/mjpieters/aiolimiter/blob/main/CHANGELOG.md"
 "Coverage: codecov" = "https://codecov.io/github/mjpieters/aiolimiter"
-"GitHub: issues" = "https://github.com/mjpieters/aiolimiter/issues"
 
-[tool.poetry.dependencies]
-python = "^3.8"
+[dependency-groups]
+dev = [
+    "dunamai>=1.24.1",
+    "pre-commit~=4.2",
+    "pyright~=1.1",
+    "pytest-asyncio~=1.0",
+    "pytest-cov~=6.2",
+    "pytest~=8.4",
+    "ruff~=0.12",
+    "towncrier~=24.8",
+    "tox-uv~=1.26",
+    "tox~=4.27",
+    "typing-extensions>=4.12.2",
+]
+docs = [
+    "aiohttp-theme~=0.1",
+    "dunamai>=1.24.1",
+    "sphinx-autobuild>=2024.10.3",
+    "sphinx-autodoc-typehints>=2.3.0",
+    "sphinx>=7.4.0",
+    "sphinxcontrib-spelling~=8.0",
+    "toml>=0.10.2 ; python_full_version < '3.11'",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = ">=7,<9"
-flake8 = "^5.0.3"
-flake8-bugbear = "^23.1.20"
-pytest-asyncio = ">=0.24,<0.25"
-pytest-cov = ">=4,<6"
-tox = ">=3.14.1,<5.0.0"
-pre-commit = ">=2.9.2,<4.0.0"
-doit = ">=0.34,<0.37"
-isort = "^5.2.1"
-toml = "^0.10.0"
-twine = ">=4,<7"
-towncrier = ">=22.8,<25.0"
+[tool.uv]
+default-groups = [
+    "dev",
+    "docs",
+]
 
-[tool.poetry.group.dev.dependencies.black]
-version = "^24.4.2"
-markers = "platform_python_implementation != 'PyPy'"
+[tool.hatch.build.targets.sdist]
+include = [
+    "CHANGELOG.md",
+    "tests",
+]
 
-[tool.poetry.group.dev.dependencies.mypy]
-version = "^1.1"
-markers = "platform_python_implementation != 'PyPy'"
+[build-system]
+requires = ["hatchling~=1.27", "uv-dynamic-versioning~=0.8"]
+build-backend = "hatchling.build"
 
-[tool.poetry.group.docs]
-optional = true
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
-[tool.poetry.group.docs.dependencies]
-sphinx = ">=4.2.0,<8.0.0"
-aiohttp-theme = "^0.1.6"
-sphinx-autodoc-typehints = ">=1.10.3,<3.0.0"
-sphinxcontrib-spelling = ">=4.3,<8.0"
-toml = "^0.10.0"
+[tool.ruff.lint]
+extend-select = [
+    "B",    # bugbear
+    "I",    # isort
+    "SIM",  # simplify
+    "UP",   # pyupgrade
+    "RUF",  # additional ruff rules
+]
 
-[tool.black]
-target-version = ["py37", "py38", "py39", "py310", "py311", "py312", "py313"]
+[tool.pyright]
+pythonVersion = "3.9"
+include = ["src", "tests"]
+strict = ["src", "tests"]
+# When running under pre-commit, tell pyright where to find the project dependencies
+venvPath = "."
+venv = ".venv"
 
-[tool.isort]
-line_length = 88
-known_third_party = ["pytest"]
+[tool.coverage.report]
+show_missing = true
+precision = 2
+
+[tool.coverage.run]
+relative_files = true
+source = [
+    "src"
+]
+branch = true
+omit = [
+    "src/aiolimiter/__init__.py",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.tox]
+skipsdist = true
+envlist = ["py39{9,10,11,12,13,14,14t}", "pypy3"]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+dependency_groups = ["dev"]
+description = "Run test under {base_python}"
+commands = [["pytest"]]
+
+[tool.pytest.ini_options]
+addopts = ["--cov=aiolimiter", "--cov-report=term-missing"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
 
 [tool.towncrier]
 directory = "changelog.d/"
@@ -76,7 +134,3 @@ title_format = "## {name} {version} ({project_date})"
 issue_format = "[#{issue}](https://github.com/mjpieters/aiolimiter/issues/{issue})"
 start_string = "<!-- Towncrier release notes start -->\n"
 underlines = ["", "", ""]
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
