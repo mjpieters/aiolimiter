@@ -18,11 +18,11 @@ repos:
       - id: ruff-format
       - id: ruff-check
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.403
+    rev: v1.1.404
     hooks:
     - id: pyright
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 41.81.4
+    rev: 41.82.1
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/pre-commit/pre-commit-hooks
