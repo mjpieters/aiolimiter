@@ -214,7 +214,7 @@ jobs:
       uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
 
     - name: GitHub release
-      uses: ncipollo/release-action@bcfe5470707e8832e12347755757cec0eb3c22af # v1.18.0
+      uses: ncipollo/release-action@1c89adf39833729d8f85a31ccbc451b078733c80 # v1.19.1
       with:
         name: Aiolimiter ${{ needs.build.outputs.version }}
         bodyFile: release_notes.md
