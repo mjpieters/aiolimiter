@@ -126,6 +126,16 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
         self._leak()
         return self._level + amount <= self.max_rate
 
+    def estimated_wait_time(self, amount: float = 1) -> float:
+        """
+        Calculate the amount of time it will take to acquire the given amount of
+        capacity and the number of waiters.
+
+        :param amount: How much capacity you need to be available.
+        """
+        self._leak()
+        return abs(amount - self._level) / self._rate_per_sec
+
     async def acquire(self, amount: float = 1) -> None:
         """Acquire capacity in the limiter.
 
