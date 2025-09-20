@@ -8,7 +8,7 @@ default_install_hook_types:
   - post-rewrite
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.8.18
+    rev: 0.8.19
     hooks:
       - id: uv-lock
       - id: uv-sync
@@ -22,7 +22,7 @@ repos:
     hooks:
     - id: pyright
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 41.117.0
+    rev: 41.119.5
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/pre-commit/pre-commit-hooks
