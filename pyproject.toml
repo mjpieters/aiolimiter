@@ -110,7 +110,7 @@ output = "coverage.xml"
 
 [tool.tox]
 skipsdist = true
-envlist = ["py39{9,10,11,12,13,14,14t}", "pypy3"]
+envlist = ["py39", "py310", "py311", "py312", "py313", "py314", "py314t", "pypy3"]
 
 [tool.tox.env_run_base]
 runner = "uv-venv-lock-runner"
