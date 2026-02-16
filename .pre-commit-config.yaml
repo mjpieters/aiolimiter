@@ -41,6 +41,14 @@ repos:
           - --license-filepath
           - .license_header.txt
         files: '\.py$'
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.22.0
+    hooks:
+      - id: zizmor
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.11
+    hooks:
+      - id: actionlint
 ci:
   autofix_prs: false
   skip:
