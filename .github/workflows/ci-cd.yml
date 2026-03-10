@@ -37,7 +37,7 @@ jobs:
         python-version-file: "pyproject.toml"
 
     - name: Install uv
-      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
+      uses: astral-sh/setup-uv@6ee6290f1cbc4156c0bdd66691b2c144ef8df19a # v7.4.0
       with:
         enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
           ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
@@ -112,7 +112,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install uv
-      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098  # v7.3.1
+      uses: astral-sh/setup-uv@6ee6290f1cbc4156c0bdd66691b2c144ef8df19a  # v7.4.0
       with:
         enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
           ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
@@ -180,7 +180,7 @@ jobs:
         python-version-file: "pyproject.toml"
 
     - name: Install uv
-      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
+      uses: astral-sh/setup-uv@6ee6290f1cbc4156c0bdd66691b2c144ef8df19a # v7.4.0
       with:
         enable-cache: false
         cache-dependency-glob: "uv.lock"
