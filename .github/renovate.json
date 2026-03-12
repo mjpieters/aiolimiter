@@ -44,9 +44,7 @@
       "description": "These packages are not abandoned just yet",
       "matchPackageNames": [
         "aio-libs/get-releasenote",
-        "Lucas-C/pre-commit-hooks",
-        "toml",
-        "re-actors/alls-green"
+        "toml"
       ],
       "abandonmentThreshold": "5 years"
     }
