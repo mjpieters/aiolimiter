@@ -42,7 +42,7 @@ repos:
           - .license_header.txt
         files: '\.py$'
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.25.0
+    rev: v1.25.1
     hooks:
       - id: zizmor
   - repo: https://github.com/rhysd/actionlint
