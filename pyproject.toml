@@ -110,7 +110,7 @@ output = "coverage.xml"
 
 [tool.tox]
 skipsdist = true
-envlist = ["py39", "py310", "py311", "py312", "py313", "py314", "py314t", "pypy3"]
+envlist = ["py310", "py311", "py312", "py313", "py314", "py314t", "py315", "py315t", "pypy3"]
 
 [tool.tox.env_run_base]
 runner = "uv-venv-lock-runner"
@@ -118,7 +118,8 @@ dependency_groups = ["dev"]
 description = "Run test under {base_python}"
 commands = [["pytest"]]
 
-[tool.pytest.ini_options]
+[tool.pytest]
+minversion = "9.0"
 addopts = [
     "--cov",
     "--cov-report=term",
