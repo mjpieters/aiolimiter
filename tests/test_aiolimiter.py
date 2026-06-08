@@ -3,8 +3,8 @@
 # Licensed under the MIT license as detailed in LICENSE.txt
 
 import asyncio
-from collections.abc import Collection, Coroutine
-from typing import Any, Callable, TypeVar
+from collections.abc import Callable, Collection, Coroutine
+from typing import Any, TypeVar
 from unittest import mock
 
 import pytest

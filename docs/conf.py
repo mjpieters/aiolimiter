@@ -45,7 +45,7 @@ else:
 _docs_path = Path(__file__).resolve().parent
 _project_config = _read_project_config(_docs_path.parent / "pyproject.toml")
 _github_path = urlparse(_project_config["urls"]["Repository"]).path
-_github_parts = dict(zip(("user", "repo"), _github_path[1:].split("/")))
+_github_parts = dict(zip(("user", "repo"), _github_path[1:].split("/"), strict=True))
 _name = _project_config["name"]
 _authors = ", ".join([a["name"] for a in _project_config["authors"]])
 

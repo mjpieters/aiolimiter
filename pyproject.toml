@@ -1,7 +1,7 @@
 [project]
 name = "aiolimiter"
 description = "asyncio rate limiter, a leaky bucket implementation"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 authors = [
     {name = "Martijn Pieters", email = "mj@zopatista.com"}
@@ -84,7 +84,7 @@ extend-select = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.9"
+pythonVersion = "3.10"
 include = ["src", "tests"]
 strict = ["src", "tests"]
 # When running under pre-commit, tell pyright where to find the project dependencies
