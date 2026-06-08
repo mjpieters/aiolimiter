@@ -46,11 +46,11 @@ https://aiolimiter.readthedocs.io
 $ pip install aiolimiter
 ```
 
-The library requires Python 3.9 or newer.
+The library requires Python 3.10 or newer.
 
 ## Requirements
 
-- Python >= 3.9
+- Python >= 3.10
 
 ## License
 
