@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 import sys
-from datetime import date
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -84,7 +84,7 @@ master_doc = "index"
 
 # General information about the project.
 project = _name
-copyright = f"2019-{date.today().year}, {_authors}"
+copyright = f"2019-{datetime.now(tz=timezone.utc).year}, {_authors}"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
