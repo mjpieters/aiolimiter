@@ -155,8 +155,6 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
         # reset the waker to account for the new, lower level.
         self._wake_next()
 
-        return None
-
     def _wake_next(self, *_args: object) -> None:
         """Wake the next waiting future or set a timer."""
         # clear timer and any cancelled futures at the top of the heap
@@ -193,7 +191,6 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
 
     async def __aenter__(self) -> None:
         await self.acquire()
-        return None
 
     async def __aexit__(
         self,
@@ -201,4 +198,4 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
         exc: BaseException | None,
         tb: TracebackType | None,
     ) -> None:
-        return None
+        pass

@@ -39,7 +39,7 @@ dev = [
     "pytest-asyncio~=1.0",
     "pytest-cov~=7.0",
     "pytest~=9.0",
-    "ruff~=0.12",
+    "ruff~=0.16",
     "towncrier~=25.8",
     "tox-uv~=1.26",
     "tox~=4.27",
@@ -73,15 +73,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"
-
-[tool.ruff.lint]
-extend-select = [
-    "B",    # bugbear
-    "I",    # isort
-    "SIM",  # simplify
-    "UP",   # pyupgrade
-    "RUF",  # additional ruff rules
-]
 
 [tool.pyright]
 pythonVersion = "3.10"
