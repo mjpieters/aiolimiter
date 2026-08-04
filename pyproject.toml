@@ -34,7 +34,7 @@ Changelog = "https://github.com/mjpieters/aiolimiter/blob/main/CHANGELOG.md"
 [dependency-groups]
 dev = [
     "dunamai>=1.24.1",
-    "pre-commit~=4.2",
+    "prek>=0.4.12",
     "pyright~=1.1",
     "pytest-asyncio~=1.0",
     "pytest-cov~=7.0",
@@ -78,9 +78,6 @@ source = "uv-dynamic-versioning"
 pythonVersion = "3.10"
 include = ["src", "tests"]
 strict = ["src", "tests"]
-# When running under pre-commit, tell pyright where to find the project dependencies
-venvPath = "."
-venv = ".venv"
 
 [tool.coverage.report]
 show_missing = true
