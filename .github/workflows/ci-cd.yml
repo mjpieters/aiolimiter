@@ -44,7 +44,7 @@ jobs:
         jq . "${COMMIT_DATA_PATH}"
         echo "::endgroup::"
 
-        if jq --exit-status '.commits | any(.messageBody | contains("[skip prek]"))' "${COMMIT_DATA_PATH}" > /dev/null; then
+        if jq --exit-status '.commits | any(.message // messageBody | contains("[skip prek]"))' "${COMMIT_DATA_PATH}" > /dev/null; then
           echo "::warning title=Skipping prek run::Found [skip prek] string in commit message, skipping validation with prek"
           echo 'skip-prek=true' >> "$GITHUB_OUTPUT"
         else
