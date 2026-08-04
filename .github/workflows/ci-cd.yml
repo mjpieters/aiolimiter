@@ -67,6 +67,10 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
+        # fetch the full git history, but without file contents, so prek can determine
+        # what files have changed.
+        filter: blob:none
+        fetch-depth: 0
 
     - name: Install uv
       uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -78,13 +82,22 @@ jobs:
     - name: Install dependencies
       run: uv sync
 
-    - name: Install prek
+    - name: Determine reference sha
+      id: ref-sha
+      run: |
+        # Determine the reference sha for changed files
+        FROM_REF='HEAD^'
+        if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            FROM_REF="$(jq -r '.before' "${GITHUB_EVENT_PATH}")"
+        fi
+        echo "Validating changed files for ${FROM_REF}...HEAD"
+        echo "from-ref=${FROM_REF}" >> "${GITHUB_OUTPUT}"
+
+    - name: Run prek
       uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
       with:
-        install-only: true
-
-    - name: Run prek git-hook checks against changed files
-      run: bash .github/prek-run-changed.sh
+        # Only check for changed files in the commits in this push / PR
+        extra-args: "--from-ref ${{ steps.ref-sha.outputs.from-ref }}"
 
   linting:
     runs-on: ubuntu-latest
