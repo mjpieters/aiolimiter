@@ -5,7 +5,6 @@ on:
     branches: [ "main" ]
     tags: [v*]
   pull_request:
-  merge_group:
 
 env:
   FORCE_COLOR: 1
@@ -17,9 +16,49 @@ concurrency:
 permissions: {}
 
 jobs:
+  prek-preflight:
+    runs-on: ubuntu-latest
+    name: "Prek preflight"
+    outputs:
+      skip-prek: ${{ steps.check-skip.outputs.skip-prek }}
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Check for skip label
+      id: check-skip
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY_URL: "${{ format('{0}/{1}', github.server_url, github.repository) }}"
+      run: |
+        # check each commit message for a '[skip prek]' string
+        set -euo pipefail
+        COMMIT_DATA_PATH=${GITHUB_EVENT_PATH}
+        if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+          COMMIT_DATA_PATH="$(mktemp)"
+          # for pull requests, GITHUB_REF_NAME is set to "<pr_number>/merge"
+          gh pr view --json commits "${REPOSITORY_URL}/pull/${GITHUB_REF_NAME%/merge}" > "${COMMIT_DATA_PATH}"
+        fi
+        echo "::group::Commit data (JSON)"
+        jq . "${COMMIT_DATA_PATH}"
+        echo "::endgroup::"
+
+        if jq --exit-status '.commits | any(.messageBody | contains("[skip prek]"))' "${COMMIT_DATA_PATH}" > /dev/null; then
+          echo "::warning title=Skipping prek run::Found [skip prek] string in commit message, skipping validation with prek"
+          echo 'skip-prek=true' >> "$GITHUB_OUTPUT"
+        else
+          echo 'skip-prek=false' >> "$GITHUB_OUTPUT"
+        fi
+
   prek:
     runs-on: ubuntu-latest
-    name: "Prek (pre-commit) checks"
+    name: "Prek git-hook checks"
+    needs: prek-preflight
+    if: ${{ ! fromJSON(needs.prek-preflight.outputs.skip-prek) }}
+
+    env:
+      UV_FROZEN: true
 
     permissions:
       contents: read
@@ -29,9 +68,23 @@ jobs:
       with:
         persist-credentials: false
 
-    - uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
+    - name: Install uv
+      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       with:
-        extra-args: '--group ci --all-files'
+        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
+          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+        cache-dependency-glob: "uv.lock"
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Install prek
+      uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
+      with:
+        install-only: true
+
+    - name: Run prek git-hook checks against changed files
+      run: bash .github/prek-run-changed.sh
 
   linting:
     runs-on: ubuntu-latest
@@ -159,17 +212,39 @@ jobs:
     name: Test matrix status
     runs-on: ubuntu-latest
     needs:
+      - prek-preflight
       - prek
       - linting
       - tests
+    env:
+      RESULTS_WITHOUT_PREK: ${{ format('["{0}", "{1}", "{2}"]', needs.prek-preflight.result, needs.linting.result, needs.tests.result) }}
     if: always()
     steps:
     - name: Decide whether the needed jobs succeeded or failed
       env:
-        SUCCEEDED: ${{ !(contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped')) }}
+        SUCCEEDED: ${{ !(contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(fromJSON(env.RESULTS_WITHOUT_PREK), 'skipped') || (needs.prek-preflight.outputs.skip-prek == 'false' && needs.prek.result == 'skipped')) }}
+        NEEDS_JSON: ${{ toJSON(needs) }}
       run: |
-        echo "All jobs passed: ${SUCCEEDED}"
-        if [ "${SUCCEEDED}" = 'false' ]; then exit 1; fi
+        echo '::group::Needs JSON object'
+        echo "${NEEDS_JSON}" | jq .
+        echo '::endgroup::'
+
+        # shellcheck disable=SC2016
+        FILTER='
+          # any failure or cancelled results?
+            (map_values(.|select(.result | test("^(failure|cancelled)$"))) | keys) as $unsuccessful
+          # any skipped results?
+          | (map_values(.|select(.result == "skipped")) | keys) as $skipped
+          # are we skipping prek?
+          | .["prek-preflight"].outputs["skip-prek"] == "false" as $expect_prek
+          | any($unsuccessful[], $skipped[] | select((. != "prek") or $expect_prek))
+        '
+
+        if echo "$NEEDS_JSON" | jq --exit-status "$FILTER" > /dev/null; then
+            echo "One or more jobs failed, or were skipped or cancelled"
+            exit 1
+        fi
+        echo Success
 
   build:
     name: Build distribution 📦
