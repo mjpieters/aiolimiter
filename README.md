@@ -71,27 +71,32 @@ This project uses [uv][] to manage dependencies, testing and releases. Make sure
 uv sync
 ```
 
-Tests are run with `pytest` and `tox`. Releases are made managed by a GitHub Actions workflow. Code quality is maintained with `ruff` and `pyright`, and `pre-commit` runs quick checks to maintain the standards set.
+Tests are run with `pytest` and `tox`. Releases are made managed by a GitHub Actions workflow. Code quality is maintained with `ruff` and `pyright`, and `prek` runs quick checks to maintain the standards set.
 
 A [Taskfile](https://taskfile.dev/) is provided that defines specific tasks such as linting, formatting or previewing the documentation:
 
 ```console
 $ task --list
 task: Available tasks for this project:
-* default:                     Default task, runs linters and tests
-* dev:format:                  Runs formatters      (aliases: format)
-* dev:install-precommit:       Install pre-commit into local git checkout
-* dev:lint:                    Runs linters      (aliases: lint)
-* dev:lint:code:               Lint the source code
-* dev:lint:renovate:           Lint the Renovate configuration file
-* dev:test:                    Run tests                                          (aliases: test)
-* dev:tox:                     Run tests with tox                                 (aliases: tox)
-* dev:uv-lock:                 Updates the uv lock file                           (aliases: lock)
-* dist:build:                  Build the distribution packages                    (aliases: dist)
-* dist:clean:                  Remove built distribution packages                 (aliases: clean)
-* dist:publish:                Publish package to PyPI                            (aliases: publish)
-* docs:build:                  Build project documentation                        (aliases: docs)
-* docs:serve:                  Live preview server for project documentation      (aliases: preview)
+* default:                               Default task, runs linters and tests
+* dev:format:                            Runs formatters                           (aliases: format)
+* dev:install-prek:                      Install prek into local git checkout      (aliases: dev:install-precommit)
+* dev:lint:                              Runs linters                              (aliases: lint)
+* dev:lint:code:                         Lint the source code
+* dev:lint:renovate:                     Lint the Renovate configuration file
+* dev:test:                              Run tests                               (aliases: test)
+* dev:tox:                               Run tests with tox                      (aliases: tox)
+* dev:uv-lock:                           Updates the uv lock file                (aliases: lock)
+* dist:build:                            Build the distribution packages         (aliases: dist)
+* dist:clean:                            Remove built distribution packages      (aliases: clean)
+* dist:publish:                          Publish package to PyPI                 (aliases: publish)
+* docs:build:                            Build project documentation             (aliases: docs)
+* docs:checks:                           Run all documentation checks
+* docs:checks:spelling:                  Check documentation spelling.
+* docs:checks:towncrier:                 Check changelog towncrier output()
+* docs:checks:towncrier_fragments:       Check changelog towncrier fragments
+* docs:clean:                            Clean the documentation build directory
+* docs:serve:                            Live preview server for project documentation      (aliases: preview)
 ```
 
 [leaky bucket algorithm]: https://en.wikipedia.org/wiki/Leaky_bucket
