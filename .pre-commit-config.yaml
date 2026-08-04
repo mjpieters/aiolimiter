@@ -1,57 +1,79 @@
-default_language_version:
-  python: python3.12
-minimum_pre_commit_version: 1.14.0
 default_install_hook_types:
   - pre-commit
   - post-checkout
   - post-merge
   - post-rewrite
+priorities:
+  # note: formatters can't run in parallel
+  setup: 0
+  format-eof: 10
+  format-trailing-whitespace: 11
+  format-insert-license: 12
+  format-ruff: 13
+  checks: 20
+
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.12.1
     hooks:
       - id: uv-lock
+        priority: setup
       - id: uv-sync
+        priority: setup
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.16.1
     hooks:
       - id: ruff-format
         types_or: [python, pyi, jupyter, markdown]
+        priority: format-ruff
       - id: ruff-check
+        priority: checks
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.411
     hooks:
-    - id: pyright
+      - id: pyright
+        args: [--pythonpath, .venv/bin/python]
+        language_version: ">=3.12"
+        priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 44.7.2
     hooks:
       - id: renovate-config-validator
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+        priority: checks
+  - repo: builtin
     hooks:
       - id: check-symlinks
+        priority: checks
+        groups: [ci]
       - id: check-yaml
-      - id: debug-statements
+        priority: checks
+        groups: [ci]
       - id: end-of-file-fixer
+        priority: format-eof
+        groups: [ci]
       - id: trailing-whitespace
+        priority: format-trailing-whitespace
+        groups: [ci]
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.6
     hooks:
       - id: insert-license
+        groups: [ci]
         args:
           - --license-filepath
           - .license_header.txt
-        files: '\.py$'
+        types_or:
+          - python
+        priority: format-insert-license
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.29.0
     hooks:
       - id: zizmor
+        priority: checks
+        groups: [ci]
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.12
     hooks:
       - id: actionlint
-ci:
-  autofix_prs: false
-  skip:
-    - renovate-config-validator
-    - pyright
+        priority: checks
+        groups: [ci]

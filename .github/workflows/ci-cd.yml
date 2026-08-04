@@ -17,6 +17,22 @@ concurrency:
 permissions: {}
 
 jobs:
+  prek:
+    runs-on: ubuntu-latest
+    name: "Prek (pre-commit) checks"
+
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
+      with:
+        extra-args: '--group ci --all-files'
+
   linting:
     runs-on: ubuntu-latest
     name: "Python linting"
@@ -143,6 +159,7 @@ jobs:
     name: Test matrix status
     runs-on: ubuntu-latest
     needs:
+      - prek
       - linting
       - tests
     if: always()
