@@ -87,11 +87,27 @@ jobs:
     - name: Install dependencies
       run: uv sync
 
+    - name: Show event payload and vars
+      run: |
+        echo "GITHUB_SHA=${GITHUB_SHA}"
+        jq . "$GITHUB_EVENT_PATH"
+
+    - name: Determine reference sha
+      id: ref-sha
+      run: |
+        # Determine the reference sha for changed files
+        FROM_REF='HEAD^'
+        if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            FROM_REF="$(jq -r '.before' "${GITHUB_EVENT_PATH}")"
+        fi
+        echo "Validating changed files for ${FROM_REF}...HEAD"
+        echo "from-ref=${FROM_REF}" >> "${GITHUB_OUTPUT}"
+
     - name: Run prek
       uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
       with:
         # Only check for changed files in the commits in this push / PR
-        extra-args: "--from-ref ${{ github.event.before || 'HEAD^' }}"
+        extra-args: "--from-ref ${{ steps.ref-sha.outputs.from-ref }}"
 
   linting:
     runs-on: ubuntu-latest
