@@ -41,13 +41,18 @@ jobs:
           gh pr view --json commits "${REPOSITORY_URL}/pull/${GITHUB_REF_NAME%/merge}" > "${COMMIT_DATA_PATH}"
         fi
         echo "::group::Commit data (JSON)"
-        jq . "${COMMIT_DATA_PATH}"
+        jq '{"commits"}' "${COMMIT_DATA_PATH}"
         echo "::endgroup::"
 
-        if jq --exit-status '.commits | any(.message // messageBody | contains("[skip prek]"))' "${COMMIT_DATA_PATH}" > /dev/null; then
+        if jq --exit-status '.commits | any(.message // .messageBody | contains("[skip prek]"))' "${COMMIT_DATA_PATH}" > /dev/null; then
           echo "::warning title=Skipping prek run::Found [skip prek] string in commit message, skipping validation with prek"
           echo 'skip-prek=true' >> "$GITHUB_OUTPUT"
         else
+          JQSTATUS="$?"
+          if (( JQSTATUS != 1 )); then
+            echo "::error title=Unexpected jq exit status::jq script exited with status ${JQSTATUS}"
+            exit 1
+          fi
           echo 'skip-prek=false' >> "$GITHUB_OUTPUT"
         fi
 
@@ -235,7 +240,6 @@ jobs:
     steps:
     - name: Decide whether the needed jobs succeeded or failed
       env:
-        SUCCEEDED: ${{ !(contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(fromJSON(env.RESULTS_WITHOUT_PREK), 'skipped') || (needs.prek-preflight.outputs.skip-prek == 'false' && needs.prek.result == 'skipped')) }}
         NEEDS_JSON: ${{ toJSON(needs) }}
       run: |
         echo '::group::Needs JSON object'
@@ -254,8 +258,14 @@ jobs:
         '
 
         if echo "$NEEDS_JSON" | jq --exit-status "$FILTER" > /dev/null; then
-            echo "One or more jobs failed, or were skipped or cancelled"
+            echo "One or more required jobs failed, were skipped or cancelled"
             exit 1
+        else
+          JQSTATUS="$?"
+          if (( JQSTATUS != 1 )); then
+            echo "::error title=Unexpected jq exit status::jq script exited with status ${JQSTATUS}"
+            exit 1
+          fi
         fi
         echo Success
 
