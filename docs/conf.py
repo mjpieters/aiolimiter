@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2019 Martijn Pieters
+# Copyright (c) 2019-2026 Martijn Pieters
 # Licensed under the MIT license as detailed in LICENSE.txt
 
 #

@@ -60,6 +60,7 @@ repos:
       - id: insert-license
         groups: [ci]
         args:
+          - --use-current-year
           - --license-filepath
           - .license_header.txt
         types_or:
