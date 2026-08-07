@@ -14,7 +14,7 @@ priorities:
 
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.2
+    rev: 0.12.3
     hooks:
       - id: uv-lock
         priority: setup
@@ -36,7 +36,7 @@ repos:
         language_version: ">=3.12"
         priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.14.7
+    rev: 44.14.8
     hooks:
       - id: renovate-config-validator
         priority: checks
