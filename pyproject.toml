@@ -60,6 +60,13 @@ default-groups = [
     "dev",
     "docs",
 ]
+# Ensure that uv rebuilds the project when git commit or tags change
+# to update the version
+cache-keys = [
+    { file = "pyproject.toml" },
+    { git = { commit = true, tags = true } },
+    { env = "UV_DYNAMIC_VERSIONING_BYPASS" }
+]
 
 [tool.hatch.build.targets.sdist]
 include = [

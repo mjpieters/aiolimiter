@@ -79,9 +79,7 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
-      with:
-        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
-          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+      with:  # zizmor: ignore[cache-poisoning] on tag pushes, cache is automatically disabled by the action
         cache-dependency-glob: "uv.lock"
 
     - name: Install dependencies
@@ -125,9 +123,7 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
-      with:
-        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
-          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+      with:  # zizmor: ignore[cache-poisoning] on tag pushes, cache is automatically disabled by the action
         cache-dependency-glob: "uv.lock"
         python-version: ${{ steps.python.outputs.python-path }}
         activate-environment: true
@@ -200,9 +196,7 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d  # v10.0.0
-      with:
-        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
-          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+      with:  # zizmor: ignore[cache-poisoning] on tag pushes, cache is automatically disabled by the action
         cache-dependency-glob: "uv.lock"
         python-version: ${{ steps.python.outputs.python-path }}
 
