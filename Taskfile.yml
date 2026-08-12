@@ -54,7 +54,7 @@ tasks:
     deps:
       - dev:install-prek
     cmds:
-      - uv run prek run --files .github/renovate.json renovate-config-validator
+      - uv run prek run renovate-config-validator --files .github/renovate.json
 
   dev:lint:code:
     desc: Lint the source code
