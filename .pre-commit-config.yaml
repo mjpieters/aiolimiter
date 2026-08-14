@@ -21,7 +21,7 @@ repos:
       - id: uv-sync
         priority: setup
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.2
+    rev: v0.16.3
     hooks:
       - id: ruff-format
         types_or: [python, pyi, jupyter, markdown]
@@ -36,7 +36,7 @@ repos:
         language_version: ">=3.12"
         priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.17.1
+    rev: 44.29.4
     hooks:
       - id: renovate-config-validator
         priority: checks
