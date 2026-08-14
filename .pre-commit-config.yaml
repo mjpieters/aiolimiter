@@ -14,7 +14,7 @@ priorities:
 
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.3
+    rev: 0.12.4
     hooks:
       - id: uv-lock
         priority: setup
