@@ -36,7 +36,7 @@ repos:
         language_version: ">=3.12"
         priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.30.2
+    rev: 44.31.0
     hooks:
       - id: renovate-config-validator
         priority: checks
