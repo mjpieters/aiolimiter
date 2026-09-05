@@ -133,12 +133,14 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
         freed before returning.
 
         :param amount: How much capacity you need to be available.
-        :exception: Raises :exc:`ValueError` if `amount` is greater than
-           :attr:`max_rate`.
+        :exception: Raises :exc:`ValueError` if `amount` is negative, NaN,
+           or greater than :attr:`max_rate`.
 
         """
         if amount > self.max_rate:
             raise ValueError("Can't acquire more than the maximum capacity")
+        if not amount >= 0:
+            raise ValueError("Amount must be non-negative and not NaN")
 
         loop = self._loop
         while not self.has_capacity(amount):
