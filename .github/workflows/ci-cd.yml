@@ -93,6 +93,7 @@ jobs:
       id: ref-sha
       run: |
         # Determine the reference sha for changed files
+        set -euo pipefail
         FROM_REF='HEAD^'
         if [[ "$GITHUB_EVENT_NAME" == push ]]; then
             if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
@@ -162,6 +163,7 @@ jobs:
 
     - name: Check documentation
       run: |
+        set -euo pipefail
         for file in changelog.d/*; do
           if [[ "$file" == changelog.d/towncrier_template.md ]]; then
             continue
@@ -364,4 +366,11 @@ jobs:
         PRERELEASE_SWITCH: ${{ case(fromJSON(needs.build.outputs.prerelease), '--prerelease', '') }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_REPO: ${{ github.repository }}
-      run: gh release create --title "${RELEASE_TITLE}" --notes-file release_notes.md "${PRERELEASE_SWITCH}" "${GITHUB_REF_NAME}" dist/*
+      run: |
+        set -euo pipefail
+        args=( --title "$RELEASE_TITLE" --notes-file release_notes.md  )
+        if [[ -n "$PRERELEASE_SWITCH" ]]; then
+            args+=( "$PRERELEASE_SWITCH" )
+        fi
+        echo "::debug::Executing gh release create $(printf '%q ' "${args[@]}")$GITHUB_REF_NAME dist/*"
+        gh release create "${args[@]}" "${GITHUB_REF_NAME}" dist/*
