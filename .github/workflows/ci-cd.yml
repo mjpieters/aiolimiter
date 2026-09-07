@@ -91,7 +91,11 @@ jobs:
         # Determine the reference sha for changed files
         FROM_REF='HEAD^'
         if [[ "$GITHUB_EVENT_NAME" == push ]]; then
-            FROM_REF="$(jq -r '.before' "${GITHUB_EVENT_PATH}")"
+            if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+                FROM_REF="$GITHUB_REF_NAME"
+            else
+                FROM_REF="$(jq -r '.before' "${GITHUB_EVENT_PATH}")"
+            fi
         fi
         echo "Validating changed files for ${FROM_REF}...HEAD"
         echo "from-ref=${FROM_REF}" >> "${GITHUB_OUTPUT}"
