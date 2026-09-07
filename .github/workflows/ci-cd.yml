@@ -8,6 +8,8 @@ on:
 
 env:
   FORCE_COLOR: 1
+  UV_FROZEN: true
+  UV_NO_BUILD: true
   # renovate: datasource=pypi depName=uv-dynamic-versioning
   UV_DYNAMIC_VERSIONING_VERSION: 0.14.1
   # renovate: datasource=pypi depName=twine
@@ -66,9 +68,6 @@ jobs:
     needs: prek-preflight
     if: ${{ ! fromJSON(needs.prek-preflight.outputs.skip-prek) }}
 
-    env:
-      UV_FROZEN: true
-
     permissions:
       contents: read
 
@@ -115,8 +114,6 @@ jobs:
     name: "Python linting"
     permissions:
       contents: read
-    env:
-      UV_FROZEN: true
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -193,8 +190,6 @@ jobs:
     permissions:
       contents: read
       id-token: write  # needed for the codecov actions to obtain a OIDC token
-    env:
-      UV_FROZEN: true
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -281,8 +276,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      UV_FROZEN: true
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     needs:
       - test-summary
