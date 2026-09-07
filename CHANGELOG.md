@@ -14,6 +14,20 @@
 
 <!-- Towncrier release notes start -->
 
+## aiolimiter 1.3.0 (2026-09-07)
+
+
+### Features
+
+- Tightened boundary checks for the `amount` argument to `AsyncLimiter.acquire()`, rejecting values outside the 0 to `max_rate` range. Negative values and `NaN` are no longer accepted. ([#760](https://github.com/mjpieters/aiolimiter/issues/760))
+
+
+
+### Misc
+
+- [#313](https://github.com/mjpieters/aiolimiter/issues/313), [#655](https://github.com/mjpieters/aiolimiter/issues/655)
+
+
 ## Aiolimiter 1.2.1 (2024-12-08)
 
 
