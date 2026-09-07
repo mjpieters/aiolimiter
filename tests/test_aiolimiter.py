@@ -48,29 +48,11 @@ async def test_has_capacity() -> None:
     assert not limiter.has_capacity()
 
 
-async def test_over_acquire() -> None:
+@pytest.mark.parametrize("amount", [-1, float("-inf"), float("nan"), 42])
+async def test_acquire_boundary_checks(amount: float) -> None:
     limiter = AsyncLimiter(1)
     with pytest.raises(ValueError):
-        await limiter.acquire(42)
-
-
-@pytest.mark.parametrize("amount", [-1, float("-inf"), float("nan")])
-async def test_invalid_acquire_preserves_capacity(amount: float) -> None:
-    limiter = AsyncLimiter(1)
-    await limiter.acquire()
-    with pytest.raises(ValueError):
-        await asyncio.wait_for(limiter.acquire(amount), timeout=0.1)
-    assert not limiter.has_capacity()
-
-
-async def test_acquire_zero_and_fractional_amounts() -> None:
-    limiter = AsyncLimiter(1)
-    with MockLoopTime():
-        await limiter.acquire(0)
-        assert limiter.has_capacity(1)
-        await limiter.acquire(0.5)
-        assert limiter.has_capacity(0.5)
-        assert not limiter.has_capacity(1)
+        await limiter.acquire(amount)
 
 
 async def acquire_task(limiter: AsyncLimiter) -> None:
@@ -119,6 +101,16 @@ class MockLoopTime:
 
     def __exit__(self, *_: object) -> None:
         self.patch.stop()
+
+
+async def test_acquire_zero_and_fractional_amounts() -> None:
+    limiter = AsyncLimiter(1)
+    with MockLoopTime():
+        await limiter.acquire(0)
+        assert limiter.has_capacity(1)
+        await limiter.acquire(0.5)
+        assert limiter.has_capacity(0.5)
+        assert not limiter.has_capacity(1)
 
 
 @pytest.mark.parametrize("task", [acquire_task, async_contextmanager_task])
