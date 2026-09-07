@@ -70,6 +70,7 @@ cache-keys = [
 
 [tool.hatch.build.targets.sdist]
 include = [
+    "src",
     "CHANGELOG.md",
     "tests",
 ]
