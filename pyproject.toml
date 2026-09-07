@@ -136,3 +136,4 @@ title_format = "## {name} {version} ({project_date})"
 issue_format = "[#{issue}](https://github.com/mjpieters/aiolimiter/issues/{issue})"
 start_string = "<!-- Towncrier release notes start -->\n"
 underlines = ["", "", ""]
+ignore = []

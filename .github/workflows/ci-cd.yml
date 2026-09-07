@@ -164,16 +164,6 @@ jobs:
     - name: Check documentation
       run: |
         set -euo pipefail
-        for file in changelog.d/*; do
-          if [[ "$file" == changelog.d/towncrier_template.md ]]; then
-            continue
-          fi
-          if [[ ! "$file" =~ /[0-9]+\.(feature|bugfix|doc|removal|misc)(\.md)?$ ]]; then
-            echo -e "Not a valid towncrier fragment name: \e[1;33m{{.ITEM}}\e[0m"
-            echo 'Towncrier fragments consist of the GitHub issue number, a dot, and a type (feature, bugfix, doc, removal, misc), optionally followed by .md.'
-            exit 1
-          fi
-        done
         uv run towncrier build --draft
         cd docs || exit 1
         make spelling
