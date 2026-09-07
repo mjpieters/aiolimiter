@@ -172,22 +172,6 @@ tasks:
     cmds:
       - make spelling {{.CLI_ARGS}}
 
-  docs:checks:towncrier_fragments:
-    desc: Check changelog towncrier fragments
-    deps: ['util:check_uv']
-    method: none
-    sources:
-      - changelog.d/**
-      - exclude: changelog.d/towncrier_template.md
-    cmds:
-      - for: sources
-        cmd: |
-          if [[ ! "{{.ITEM}}" =~ /[0-9]+\.(feature|bugfix|doc|removal|misc)(\.md)?$ ]]; then
-            echo -e "Not a valid towncrier fragment name: \e[1;33m{{.ITEM}}\e[0m"
-            echo 'Towncrier fragments consist of the GitHub issue number, a dot, and a type (feature, bugfix, doc, removal, misc), optionally followed by .md.'
-            exit 1
-          fi
-
   docs:checks:towncrier:
     desc: Check changelog towncrier output()
     deps: ['util:check_uv']
@@ -202,7 +186,7 @@ tasks:
     desc: Run all documentation checks
     deps:
       - docs:checks:spelling
-      - docs:checks:towncrier_fragments
+      - docs:checks:towncrier
 
   docs:serve:
     aliases:
