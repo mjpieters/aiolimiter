@@ -8,6 +8,10 @@ on:
 
 env:
   FORCE_COLOR: 1
+  # renovate: datasource=pypi depName=uv-dynamic-versioning
+  UV_DYNAMIC_VERSIONING_VERSION: 0.14.1
+  # renovate: datasource=pypi depName=twine
+  TWINE_VERSION: 7.0.0
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -172,6 +176,11 @@ jobs:
         cd docs || exit 1
         make spelling
 
+    - name: Check packaging
+      run: |
+        uv build
+        uvx twine@"$TWINE_VERSION" check --strict dist/*
+
   tests:
     strategy:
       fail-fast: false
@@ -305,10 +314,7 @@ jobs:
       run: |
         uv build
         rm -f dist/.gitignore  # get-releasenotes can't handle non-dist files here
-        echo "version=$(uvx hatch version)" >> "$GITHUB_OUTPUT"
-
-    - name: Check build
-      run: uvx twine check --strict dist/*
+        echo "version=$(uvx uv-dynamic-versioning@"$UV_DYNAMIC_VERSIONING_VERSION")" >> "$GITHUB_OUTPUT"
 
     - name: Prepare Release Note
       id: note
@@ -317,9 +323,9 @@ jobs:
         changes_file: CHANGELOG.md
         output_file: release_notes.md
         version: ${{ steps.build-dist.outputs.version }}
-        start_line: '<!-- changes go below this line -->'
-        head_line: '## \[{version}\] - {date}'
-        name: Aiolimiter
+        start_line: '<!-- Towncrier release notes start -->'
+        head_line: '## {name} {version} \({date}\)'
+        name: '[aA]iolimiter'
         dist_dir: dist
 
     - name: Store the Python 🐍 distribution 📦

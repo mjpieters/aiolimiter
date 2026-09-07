@@ -5,7 +5,8 @@
     "bot"
   ],
   "extends": [
-    "config:best-practices"
+    "config:best-practices",
+    "customManagers:githubActionsVersions"
   ],
   "pre-commit": {
     "enabled": true
