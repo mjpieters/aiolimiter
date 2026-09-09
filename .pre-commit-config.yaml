@@ -29,14 +29,14 @@ repos:
       - id: ruff-check
         priority: checks
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.411
+    rev: v1.1.413
     hooks:
       - id: pyright
         args: [--pythonpath, .venv/bin/python]
         language_version: ">=3.12"
         priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.69.12
+    rev: 44.74.0
     hooks:
       - id: renovate-config-validator
         priority: checks
@@ -67,7 +67,7 @@ repos:
           - python
         priority: format-insert-license
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.30.0
+    rev: v1.30.1
     hooks:
       - id: zizmor
         priority: checks
