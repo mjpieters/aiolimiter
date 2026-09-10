@@ -29,14 +29,14 @@ repos:
       - id: ruff-check
         priority: checks
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.413
+    rev: v1.1.414
     hooks:
       - id: pyright
         args: [--pythonpath, .venv/bin/python]
         language_version: ">=3.12"
         priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.75.0
+    rev: 44.79.2
     hooks:
       - id: renovate-config-validator
         priority: checks
