@@ -39,6 +39,16 @@ def test_attributes() -> None:
     assert limiter.time_period == 81
 
 
+@pytest.mark.parametrize(
+    "time_period", [0, -1, float("-inf"), float("inf"), float("nan")]
+)
+def test_invalid_time_period(time_period: float) -> None:
+    with pytest.raises(
+        ValueError, match="time_period must be a finite positive number"
+    ):
+        AsyncLimiter(1, time_period)
+
+
 async def test_has_capacity() -> None:
     limiter = AsyncLimiter(1)
     assert limiter.has_capacity()
@@ -111,6 +121,35 @@ async def test_acquire_zero_and_fractional_amounts() -> None:
         await limiter.acquire(0.5)
         assert limiter.has_capacity(0.5)
         assert not limiter.has_capacity(1)
+
+
+async def test_fractional_time_period() -> None:
+    limiter = AsyncLimiter(2, 0.5)
+    with MockLoopTime() as mocked_time:
+        await limiter.acquire(2)
+        assert not limiter.has_capacity()
+
+        mocked_time.current_time = 1
+        assert limiter.has_capacity(2)
+        await limiter.acquire(2)
+
+
+async def test_zero_capacity() -> None:
+    limiter = AsyncLimiter(0)
+    await limiter.acquire(0)
+    assert limiter.has_capacity(0)
+    assert not limiter.has_capacity()
+
+
+async def test_infinite_capacity() -> None:
+    limiter = AsyncLimiter(float("inf"))
+    with MockLoopTime() as mocked_time:
+        await limiter.acquire()
+        mocked_time.current_time = 1
+        await limiter.acquire()
+        mocked_time.current_time = 2
+        assert limiter.has_capacity()
+        assert limiter.has_capacity(float("inf"))
 
 
 @pytest.mark.parametrize("task", [acquire_task, async_contextmanager_task])
