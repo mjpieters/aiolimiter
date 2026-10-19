@@ -106,7 +106,7 @@ jobs:
         echo "from-ref=${FROM_REF}" >> "${GITHUB_OUTPUT}"
 
     - name: Run prek
-      uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
+      uses: j178/prek-action@af4d4fcb6922b8e6f65c0426947125fcc38794ce # v3.0.2
       with:
         # Only check for changed files in the commits in this push / PR
         extra-args: "--from-ref ${{ steps.ref-sha.outputs.from-ref }}"
