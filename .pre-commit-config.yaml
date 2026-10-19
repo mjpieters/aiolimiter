@@ -36,7 +36,7 @@ repos:
         language_version: ">=3.12"
         priority: checks
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.164.5
+    rev: 44.167.5
     hooks:
       - id: renovate-config-validator
         priority: checks
@@ -67,7 +67,7 @@ repos:
           - python
         priority: format-insert-license
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.31.0
+    rev: v1.31.1
     hooks:
       - id: zizmor
         priority: checks
