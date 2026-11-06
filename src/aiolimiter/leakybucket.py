@@ -12,6 +12,7 @@ from contextlib import AbstractAsyncContextManager
 from functools import partial
 from heapq import heappop, heappush
 from itertools import count
+from math import isfinite
 from types import TracebackType
 
 LIMITER_REUSED_ACROSS_LOOPS_WARNING = (
@@ -50,9 +51,10 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
 
     :param max_rate: Allow up to `max_rate` / `time_period` acquisitions before
        blocking.
-    :param time_period: duration, in seconds, of the time period in which to
-       limit the rate. Note that up to `max_rate` acquisitions are allowed
+    :param time_period: Positive, finite duration in seconds of the time period
+       in which to limit the rate. Up to `max_rate` acquisitions are allowed
        within this time period in a burst.
+    :raises ValueError: If `time_period` is not positive and finite.
 
     """
 
@@ -72,6 +74,9 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
     time_period: float  #: The configured `time_period` value for this limiter.
 
     def __init__(self, max_rate: float, time_period: float = 60) -> None:
+        if not isfinite(time_period) or time_period <= 0:
+            raise ValueError("time_period must be a finite positive number")
+
         self.max_rate = max_rate
         self.time_period = time_period
         self._rate_per_sec = max_rate / time_period
