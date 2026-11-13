@@ -67,6 +67,8 @@ or you can simply test if there is space first by calling
     reused across loops, but no guarantees are being made for how well this
     will work.
 
+.. _varying-capacity-requests:
+
 Varying capacity requests
 -------------------------
 
@@ -79,7 +81,17 @@ decreasing the amount of capacity you work with::
 Do be careful with this though; when mixing capacity amounts, small capacity
 requests tend to get run before large blocks of capacity when at or close to the
 maximum rate, because there is a greater likelihood that there is enough free
-capacity for a smaller request before there is space for a larger one.
+capacity for a smaller request before there is space for a larger one. With a
+steady stream of small requests, a large request may never get to run at all.
+
+If that is a problem, create the limiter with ``fair=True``. Tasks then acquire
+capacity strictly in the order they started waiting, and new requests no longer
+skip ahead of requests already waiting::
+
+   limiter = AsyncLimiter(10, fair=True)
+
+The trade-off is that a large request at the front of the queue holds up the
+smaller requests behind it, even when there is enough capacity for those.
 
 Bursting
 --------
