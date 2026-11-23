@@ -67,7 +67,7 @@ repos:
           - python
         priority: format-insert-license
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.33.0
+    rev: v1.33.1
     hooks:
       - id: zizmor
         priority: checks
