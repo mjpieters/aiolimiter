@@ -37,6 +37,8 @@ def test_attributes() -> None:
     limiter = AsyncLimiter(42, 81)
     assert limiter.max_rate == 42
     assert limiter.time_period == 81
+    assert not limiter.fair
+    assert AsyncLimiter(42, 81, fair=True).fair
 
 
 async def test_has_capacity() -> None:
@@ -198,6 +200,71 @@ async def test_task_cancelled() -> None:
         tasks[0].cancel()
         mocked_time.current_time = 1
         pending = await wait_for_n_done(tasks[1:], 1)
+        assert not pending
+
+
+async def test_waiting_task_keeps_its_place() -> None:
+    limiter = AsyncLimiter(1, 1)
+    with MockLoopTime() as mocked_time:
+        await limiter.acquire()
+        tasks = [asyncio.ensure_future(limiter.acquire()) for _ in range(2)]
+        pending = await wait_for_n_done(tasks, 0)
+        assert len(pending) == 2
+
+        # Acquiring wakes up the first task, but before it can resume, another
+        # acquisition takes the capacity.
+        mocked_time.current_time = 1
+        await limiter.acquire(0)
+        await limiter.acquire()
+        pending = await wait_for_n_done(tasks, 0)
+        assert len(pending) == 2
+
+        # The first task is still first in line.
+        mocked_time.current_time = 2
+        pending = await wait_for_n_done(tasks, 1)
+        assert pending == {tasks[1]}
+
+
+async def test_fair_acquire() -> None:
+    limiter = AsyncLimiter(3, 3, fair=True)
+    with MockLoopTime() as mocked_time:
+        # Fill the bucket with an amount of 1
+        await limiter.acquire(1)
+
+        # Acquiring an amount of 3 now takes 1 second
+        large = asyncio.ensure_future(limiter.acquire(3))
+        pending = await wait_for_n_done([large], 0)
+        assert pending
+
+        # A smaller amount must wait its turn, even though there is capacity
+        small = asyncio.ensure_future(limiter.acquire(1))
+        pending = await wait_for_n_done([large, small], 0)
+        assert len(pending) == 2
+
+        mocked_time.current_time = 1
+        pending = await wait_for_n_done([large, small], 1)
+        assert pending == {small}
+
+        mocked_time.current_time = 2
+        pending = await wait_for_n_done([small], 1)
+        assert not pending
+
+
+async def test_fair_task_cancelled() -> None:
+    limiter = AsyncLimiter(3, 3, fair=True)
+    with MockLoopTime():
+        # Fill the bucket with an amount of 1
+        await limiter.acquire(1)
+
+        # A smaller amount waits behind a larger amount
+        large = asyncio.ensure_future(limiter.acquire(3))
+        small = asyncio.ensure_future(limiter.acquire(1))
+        pending = await wait_for_n_done([large, small], 0)
+        assert len(pending) == 2
+
+        # But if the larger amount is cancelled, the smaller amount can go ahead
+        large.cancel()
+        pending = await wait_for_n_done([small], 1)
         assert not pending
 
 

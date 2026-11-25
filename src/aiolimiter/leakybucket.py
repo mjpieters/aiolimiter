@@ -53,6 +53,10 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
     :param time_period: duration, in seconds, of the time period in which to
        limit the rate. Note that up to `max_rate` acquisitions are allowed
        within this time period in a burst.
+    :param fair: If true, waiting tasks acquire capacity strictly in the order
+       they started waiting, and tasks never skip ahead of tasks that are
+       already waiting. By default, waiting tasks that request smaller amounts
+       of capacity go first, see :ref:`varying-capacity-requests`.
 
     """
 
@@ -64,24 +68,30 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
         "_rate_per_sec",
         "_waiters",
         "_waker_handle",
+        "fair",
         "max_rate",
         "time_period",
     )
 
     max_rate: float  #: The configured `max_rate` value for this limiter.
     time_period: float  #: The configured `time_period` value for this limiter.
+    fair: bool  #: The configured `fair` value for this limiter.
 
-    def __init__(self, max_rate: float, time_period: float = 60) -> None:
+    def __init__(
+        self, max_rate: float, time_period: float = 60, *, fair: bool = False
+    ) -> None:
         self.max_rate = max_rate
         self.time_period = time_period
+        self.fair = fair
         self._rate_per_sec = max_rate / time_period
         self._level = 0.0
         self._last_check = 0.0
 
         # timer until next waiter can resume
         self._waker_handle: asyncio.TimerHandle | None = None
-        # min-heap with (amount requested, order, future) for waiting tasks
-        self._waiters: list[tuple[float, int, asyncio.Future[None]]] = []
+        # min-heap with (priority, order, amount requested, future) for waiting
+        # tasks; the priority is the amount requested, or 0 in fair mode.
+        self._waiters: list[tuple[float, int, float, asyncio.Future[None]]] = []
         # counter used to order waiting tasks
         self._next_count = partial(next, count())
 
@@ -96,9 +106,7 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
                 # the assumption that they are no longer viable.
                 loop = self._event_loop = asyncio.get_running_loop()
                 self._waiters = [
-                    (amt, cnt, fut)
-                    for amt, cnt, fut in self._waiters
-                    if fut.get_loop() == loop
+                    waiter for waiter in self._waiters if waiter[-1].get_loop() == loop
                 ]
                 _warn_reuse()
 
@@ -143,15 +151,24 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
             )
 
         loop = self._loop
-        while not self.has_capacity(amount):
-            # Add a future to the _waiters heapq to be notified when capacity
-            # has come up. The future callback uses call_soon so other tasks
-            # are checked *after* completing capacity acquisition in this task.
-            fut = loop.create_future()
-            fut.add_done_callback(partial(loop.call_soon, self._wake_next))
-            heappush(self._waiters, (amount, self._next_count(), fut))
-            self._wake_next()
-            await fut
+        # in fair mode, don't skip ahead of tasks that are already waiting
+        must_wait = self.fair and bool(self._waiters)
+        if must_wait or not self.has_capacity(amount):
+            priority = 0 if self.fair else amount
+            # if another task took the capacity by the time this task resumes,
+            # it waits again, but keeps its place in the queue.
+            order = self._next_count()
+            while must_wait or not self.has_capacity(amount):
+                must_wait = False
+                # Add a future to the _waiters heapq to be notified when
+                # capacity has come up. The future callback uses call_soon so
+                # other tasks are checked *after* completing capacity
+                # acquisition in this task.
+                fut = loop.create_future()
+                fut.add_done_callback(partial(loop.call_soon, self._wake_next))
+                heappush(self._waiters, (priority, order, amount, fut))
+                self._wake_next()
+                await fut
 
         self._level += amount
         # reset the waker to account for the new, lower level.
@@ -170,7 +187,7 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
             # nothing left waiting
             return
 
-        amount, _, fut = heap[0]
+        _, _, amount, fut = heap[0]
         self._leak()
         needed = amount - self.max_rate + self._level
         if needed <= 0:
@@ -184,6 +201,8 @@ class AsyncLimiter(AbstractAsyncContextManager[None]):
 
     def __repr__(self) -> str:  # pragma: no cover
         args = f"max_rate={self.max_rate!r}, time_period={self.time_period!r}"
+        if self.fair:
+            args += ", fair=True"
         state = f"level: {self._level:f}, waiters: {len(self._waiters)}"
         if (handle := self._waker_handle) and not handle.cancelled():
             microseconds = int((handle.when() - self._loop.time()) * 10**6)
